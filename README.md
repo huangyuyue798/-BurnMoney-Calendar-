@@ -1,2 +1,27 @@
 # BurnMoney-Calendar-
-烧钱日历 —— 年轻人的资产清醒器 每天都在不知不觉中烧钱吗？ 「烧钱日历」帮你实时记录资产变化，自动计算日均花费，并以直观日历和图表形式呈现。输入你的收入、支出和资产，它会告诉你：按照当前速度，你的钱还能烧多久。 不鸡汤、不说教，只用冰冷的数字把现实拍在你脸上。适合所有想管住消费、拒绝月光、为未来存下第一桶金的年轻人。
+2026/5/6
+中文：
+「烧钱日历」帮你实时记录资产变化，自动计算日均花费，并以直观日历和图表形式呈现。输入你的收入、支出和资产，它会告诉你：按照当前速度，你的钱还能烧多久。适合所有想管住消费、拒绝月光、为未来存下第一桶金的年轻人。
+English:
+BurnMoney Calendar tracks your assets in real-time, automatically calculates your daily burn rate, and displays it through clear calendars and charts. Just input your income, expenses, and assets — it will tell you exactly how long your money can last at the current pace.
+
+前言：
+这个程序是作者在大学无聊的时候写的，至于什么时候写完，
+我想大概是6月中旬左右会写完这个程序
+应该会写出来一个大粪，作者尽量尽最大努力一个月左右写出来。
+
+技术栈
+"""
+其实作者写这个文档的时候只会c,c++,python,javascript，其他会的都是grok给编的，
+大一上的学的时候感觉有点像无头苍蝇，起因是作者喜欢用花呗超前消费，
+现在大一下故想出这个项目以战养战
+"""
+
+小程序框架,微信原生小程序,原生性能更好
+前端语言,JavaScript,只会这个
+UI 组件库,WeUI
+图表,echarts-for-weixin,支持日历折线图、饼图
+数据存储,微信云数据库（JSON）,支持权限控制
+后端逻辑,云函数（Python）
+身份验证,云开发登录（openid）
+状态管理,原生全局数据
