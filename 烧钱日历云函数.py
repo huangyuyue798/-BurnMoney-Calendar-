@@ -47,7 +47,7 @@ date=goal/(存款-总花销+日均工资)
 第二天就是6.5+6.5*0.01*88-6.5*(2-1)*0.01
 
 简化的数学表达式就是
-原金额+原金额*0.01*(天数范围-天数)-原金额*(天数-1)*0.01
+原金额/天数范围+原金额/天数范围*0.01*(天数范围-天数)-原金额*(天数-1)*0.01
 =原金额*(1+0.01*(天数范围-天数)-0.01*(天数-1))
 =原金额*(1+0.01*(天数范围-2*天数+1))
 """
@@ -129,11 +129,11 @@ class goods(person):
         last_day=now_day-self.date
         #判断是否超出90天
         if last_day.days<90:
-            day_money = all_money*(1+0.01*(90-2*last_day.days+1))
+            day_money = all_money*(1+0.01*(90-2*last_day.days+1))/90
         else:
             #计算超出90天的天数也就是超过90天就累加90
             more_day = 90+90*(math.ceil(last_day.days/90))
-            day_money = all_money*(1+0.01*(more_day-2*last_day.days+1))
+            day_money = all_money*(1+0.01*(more_day-2*last_day.days+1))/more_day
         return day_money
 
     #180天大额资产算法
@@ -143,11 +143,11 @@ class goods(person):
         last_day = now_day - self.date
         # 判断是否超出180天
         if last_day.days < 180:
-            day_money = all_money * (1 + 0.01 * (180 - 2 * last_day.days + 1))
+            day_money = all_money * (1 + 0.01 * (180 - 2 * last_day.days + 1))/180
         else:
             # 计算超出90天的天数也就是超过90天就累加90
             more_day = 180 + 180 * (math.ceil(last_day.days / 180))
-            day_money = all_money * (1 + 0.01 * (more_day - 2 * last_day.days + 1))
+            day_money = all_money * (1 + 0.01 * (more_day - 2 * last_day.days + 1))/more_day
         return day_money
 
     #模式二：30天算法
@@ -157,11 +157,11 @@ class goods(person):
         last_day = now_day - self.date
         # 判断是否超出30天(实际和上面是一样的只是分开来了，无需判断模式减少性能开销)
         if last_day.days < 30:
-            day_money = all_money * (1 + 0.01 * (30 - 2 * last_day.days + 1))
+            day_money = all_money * (1 + 0.01 * (30 - 2 * last_day.days + 1))/30
         else:
             # 计算超出30天的天数也就是超过90天就累加90
             more_day = 30 + 30 * (math.ceil(last_day.days / 30))
-            day_money = all_money * (1 + 0.01 * (more_day - 2 * last_day.days + 1))
+            day_money = all_money * (1 + 0.01 * (more_day - 2 * last_day.days + 1))/more_day
         return day_money
 
     #计算后覆盖云数据并重新上传，上传每件物品的日均价格和 总的花费
@@ -197,6 +197,6 @@ class goal(person):
     #计算还有多少天可以买到目标物品
 
     #采用最简单的算法(goal-存款)/(日薪-吃)
-    def loog_day(self):
+    def long_day(self):
         self.long_day=(self.goal_money-self.all_balance)/(self.add_money()-self.eat_money)
         return self.long_day
