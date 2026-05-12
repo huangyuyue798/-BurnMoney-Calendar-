@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烧钱日记</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg: #f8f9fa;
+            --text: #111111;
+            --accent: #0066ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header { text-align: center; margin-bottom: 60px; }
+        h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -2px; }
+        .tagline { font-size: 1.35rem; color: #555; }
+
+        nav {
+            display: flex; gap: 20px; justify-content: center; margin: 40px 0; flex-wrap: wrap;
+        }
+        .nav-btn {
+            padding: 12px 28px; background: white; border: 2px solid #111; font-weight: 600;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .nav-btn.active, .nav-btn:hover { background: #111; color: white; }
+
+        section { margin-bottom: 80px; }
+        h2 { font-size: 2.2rem; margin-bottom: 24px; border-bottom: 3px solid #111; padding-bottom: 12px; display: inline-block; }
+
+        .card, .item {
+            background: white;
+            border: 2px solid #111;
+            padding: 28px;
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 14px; border: 2px solid #111; font-size: 1rem; margin: 8px 0; width: 100%;
+        }
+        button { background: #111; color: white; font-weight: 600; cursor: pointer; }
+        button:hover { background: #0066ff; }
+
+        .result {
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding: 20px;
+            background: #f0f8ff;
+            border: 3px solid var(--accent);
+            text-align: center;
+        }
+        .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* 图片样式（我加的） */
+        .item-img {
+            display: block;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin: 12px auto 12px 0;
+            border: 2px solid #111;
+        }
+        #preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 2px solid #111;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>烧钱日记</h1>
+    <p class="tagline">把每一笔消费变成每日思考</p>
+</header>
+
+<nav>
+    <div class="nav-btn active" onclick="switchTab(0)">概览</div>
+    <div class="nav-btn" onclick="switchTab(1)">添加消费</div>
+    <div class="nav-btn" onclick="switchTab(2)">我的资产</div>
+    <div class="nav-btn" onclick="switchTab(3)">目标规划</div>
+    <div class="nav-btn" onclick="switchTab(4)">设置</div>
+</nav>
+
+<!-- 概览 -->
+<section id="tab-0">
+    <h2>今日总日均花费</h2>
+    <div class="result" id="total-daily">¥ 0.00</div>
+
+    <div class="card-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px;">
+        <div class="card">
+            <strong>当前存款</strong><br>
+            <span id="balance-display" style="font-size:2.2rem;">¥ 0</span>
+        </div>
+        <div class="card">
+            <strong>月薪</strong><br>
+            <span id="salary-display" style="font-size:2.2rem;">¥ 0</span><br>
+            <small>日均收入 ¥ <span id="daily-income">0</span></small>
+        </div>
+    </div>
+</section>
+
+<!-- 添加消费 -->
+<section id="tab-1" style="display:none">
+    <h2>记录新消费</h2>
+    <div class="card">
+        <label>物品名称</label>
+        <input type="text" id="name" placeholder="例如：Intel A380显卡">
+
+        <label>价格 (元)</label>
+        <input type="number" id="price" placeholder="例如：580">
+
+        <label>分类</label>
+        <select id="kind">
+            <option value="普通">普通消费</option>
+            <option value="手机">手机 / 平板</option>
+            <option value="笔记本">笔记本 / 电脑</option>
+        </select>
+
+        <label>模式</label>
+        <select id="mode">
+            <option value="1">模式一：免息分期（90/180天）</option>
+            <option value="2">模式二：买断月光（30天循环）</option>
+        </select>
+
+        <label>上传照片（可选）</label>
+        <input type="file" id="photo" accept="image/*" onchange="previewPhoto()">
+
+        <div id="preview" style="margin:15px 0;"></div>
+
+        <button onclick="addItem()">添加物品</button>
+    </div>
+</section>
+
+<!-- 我的资产 -->
+<section id="tab-2" style="display:none">
+    <h2>资产<br>
+        <span>资产价值：</span><span id="all_money"></span>
+    </h2>
+    <div id="items-list"></div>
+</section>
+
+<!-- 目标规划 -->
+<section id="tab-3" style="display:none">
+    <h2>目标规划</h2>
+    <div class="card">
+        <label>目标名称</label>
+        <input type="text" id="goal-name" placeholder="买车 / 买房">
+
+        <label>目标金额</label>
+        <input type="number" id="goal-amount" placeholder="300000">
+
+        <button onclick="addGoal()">添加目标</button>
+    </div>
+    <div id="goal-result" class="result" style="display:none"></div>
+</section>
+
+<!-- 设置 -->
+<section id="tab-4" style="display:none">
+    <h2>基础设置</h2>
+    <div class="settings">
+        <div class="card">
+            <label>月薪（元）</label>
+            <input type="number" id="set-salary" value="12000">
+            <button onclick="updateSalary()">保存月薪</button>
+        </div>
+        <div class="card">
+            <label>当前存款（元）</label>
+            <label for="set-balance"></label><input type="number" id="set-balance" value="45000">
+            <button onclick="updateBalance()">保存存款</button>
+        </div>
+    </div>
+</section>
+
+<footer style="text-align:center;margin-top:80px;color:#666;">
+    烧钱日记 v2 • Python公式移植
+</footer>
+
+<script>
+    let items = [];
+    let goals = [];
+    let monthlySalary = 12000;
+    let balance = 45000;
+    let currentPhotoBase64 = ''; // 图片存储
+
+    // 图片预览
+    function previewPhoto() {
+        const file = document.getElementById('photo').files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentPhotoBase64 = e.target.result;
+            document.getElementById('preview').innerHTML = `<img src="${currentPhotoBase64}">`;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function saveData() {
+        localStorage.setItem('dailyItems', JSON.stringify(items));
+        localStorage.setItem('dailyGoals', JSON.stringify(goals));
+        localStorage.setItem('monthlySalary', monthlySalary);
+        localStorage.setItem('balance', balance);
+    }
+
+    function loadData() {
+        if (localStorage.getItem('dailyItems')) items = JSON.parse(localStorage.getItem('dailyItems'));
+        if (localStorage.getItem('dailyGoals')) goals = JSON.parse(localStorage.getItem('dailyGoals'));
+        if (localStorage.getItem('monthlySalary')) monthlySalary = parseFloat(localStorage.getItem('monthlySalary'));
+        if (localStorage.getItem('balance')) balance = parseFloat(localStorage.getItem('balance'));
+        renderAll();
+    }
+
+    function switchTab(n) {
+        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+        document.getElementById(`tab-${n}`).style.display = 'block';
+        document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === n));
+    }
+
+    function calculateDailyCost(item) {
+        const now = new Date();
+        const purchaseDate = new Date(item.date);
+        let daysPassed = Math.floor((now - purchaseDate) / (86400000));
+
+        let period = 90;
+        if (item.mode === 2) period = 30;
+        else if (item.kind === "手机" || item.kind === "笔记本") period = 180;
+        let all_money = item.price;
+        let more_day = period;
+
+        if (daysPassed >= period) {
+            more_day = period + period * Math.ceil(daysPassed / period);
+        }
+
+        let day_money = all_money * (1 + 0.01 * (more_day - 2 * daysPassed + 1))/period;
+        const minDaily = all_money / (period * 3);
+        return Math.max(minDaily, day_money);
+    }
+
+    function addItem() {
+        const name = document.getElementById('name').value.trim() || '未命名物品';
+        const price = parseFloat(document.getElementById('price').value);
+        const kind = document.getElementById('kind').value;
+        const mode = parseInt(document.getElementById('mode').value);
+
+        if (!price || price <= 0) return alert('请输入有效价格');
+
+        items.push({
+            name: name,
+            price: price,
+            kind: kind,
+            mode: mode,
+            date: new Date().toISOString(),
+            photo: currentPhotoBase64 || ''
+        });
+
+        balance = Math.max(0, balance - price);
+        currentPhotoBase64 = '';
+        saveData();
+        renderAll();
+
+        document.getElementById('name').value = '';
+        document.getElementById('price').value = '';
+        document.getElementById('photo').value = '';
+        document.getElementById('preview').innerHTML = '';
+    }
+
+    function removeItem(index) {
+        if (confirm('确定删除此记录？')) {
+            items.splice(index, 1);
+            saveData();
+            renderAll();
+        }
+    }
+
+    function renderItems() {
+        const container = document.getElementById('items-list');
+        container.innerHTML = '';
+        const money=document.getElementById('all_money');
+        let totalDaily = 0;
+        let all_item_money = 0;
+        items.forEach((item, i) => {
+            const daily = calculateDailyCost(item);
+            totalDaily += daily;
+            const div = document.createElement('div');
+            div.className = 'item';
+            all_item_money += item.price;
+            let imgHtml = '';
+            if (item.photo) {
+                imgHtml = `<img src="${item.photo}" class="item-img" alt="照片未正常显示">`;
+            }
+
+            div.innerHTML = `
+                ${imgHtml}
+                <strong>${item.name}</strong>　<span style="color:#666">(${item.kind})</span><br>
+                原价 ¥${item.price.toLocaleString()}　|　
+                <span style="color:#0066ff;font-weight:700">日均 ¥${daily.toFixed(2)}</span><br>
+                <small>购买于 ${new Date(item.date).toLocaleDateString('zh-CN')}</small>
+                <button onclick="removeItem(${i})" style="margin-top:12px;background:#cc0000;width:auto;padding:6px 14px;">删除</button>
+            `;
+            container.appendChild(div);
+        });
+        let all_money=document.getElementById('all_money');
+        all_money.innerText=all_item_money;
+        document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
+    }
+
+    function addGoal() {
+        const name = document.getElementById('goal-name').value.trim() || '未命名目标';
+        const amount = parseFloat(document.getElementById('goal-amount').value);
+
+        if (!amount || amount <= 0) return alert('请输入目标金额');
+
+        goals.push({ name, amount });
+        saveData();
+        calculateGoal();
+    }
+
+    function calculateGoal() {
+        const dailyIncome = monthlySalary / 30;
+        const dailyEat = 80;
+        const netDaily = dailyIncome - dailyEat;
+
+        let html = '<strong>目标达成预估：</strong><br><br>';
+        goals.forEach(g => {
+            const remaining = g.amount - balance;
+            if (remaining <= 0) {
+                html += `${g.name}：已达成！<br>`;
+            } else {
+                const days = Math.ceil(remaining / netDaily);
+                html += `${g.name}：约 <strong>${days}</strong> 天（${Math.ceil(days/30)} 个月）<br>`;
+            }
+        });
+
+        const resultDiv = document.getElementById('goal-result');
+        resultDiv.innerHTML = html;
+        resultDiv.style.display = 'block';
+    }
+
+    function updateSalary() {
+        const val = parseFloat(document.getElementById('set-salary').value);
+        if (val > 0) {
+            monthlySalary = val;
+            saveData();
+            renderAll();
+            alert('月薪已更新');
+        }
+    }
+
+    function updateBalance() {
+        const val = parseFloat(document.getElementById('set-balance').value);
+        if (val >= 0) {
+            balance = val;
+            saveData();
+            renderAll();
+            alert('存款已更新');
+        }
+    }
+
+    function renderAll() {
+        document.getElementById('balance-display').textContent = `¥ ${balance.toLocaleString()}`;
+        document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
+        document.getElementById('daily-income').textContent = (monthlySalary / 30).toFixed(0);
+        renderItems();
+        calculateGoal();
+    }
+
+    window.onload = () => {
+        loadData();
+        switchTab(0);
+    };
+</script>
+</body>
+</html>
