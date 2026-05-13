@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg: #f8f9fa;
+    --text: #111111;
+    --accent: #0066ff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+header { text-align: center; margin-bottom: 20px; margin-top:20px}
+h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -2px; }
+.tagline { font-size: 1.35rem; color: #555; }
+
+nav {
+    display: flex;
+    gap: 0;
+    left: 0;
+    top:0 ;
+    width: 100%;
+    background: white;
+    z-index: 9999;
+    justify-content: left;
+    border-bottom: 2px solid #ccc;
+    position: fixed;
+}
+.title {
+    padding: 0.3rem;
+    background: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: all 0.3s;
+}
+.nav-btn {
+    padding: 0.3rem;
+    background: white;
+    border-left: 2px solid #ccc;
+    font-weight: 500;
+    font-size: 1.2rem;
+    cursor: pointer; transition: all 0.3s;
+}
+.nav-btn.active, .nav-btn:hover { background: #111; color: white; }
+
+section { margin-bottom: 80px; }
+h2 { font-size: 2.2rem;
+    margin-bottom: 20px;
+    border-bottom: 0.2rem solid #111;
+    padding-bottom: 10px;
+    display: block;
+}
+
+.card, .item {
+    background: white;
+    border: 2px solid #111;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.card:hover, .item:hover ,.result:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+input, select, button {
+    padding: 14px; border: 2px solid #111; font-size: 1rem; margin: 8px 0; width: 100%;
+}
+button { background: #111; color: white; font-weight: 600; cursor: pointer;}
+button:hover { background: #0066ff; }
+
+.result {
+    font-size: 1.8rem;
+    font-weight: 700;
+    padding: 20px;
+    background: #f0f8ff;
+    border: 3px solid var(--accent);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.settings { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* 图片样式（我加的） */
+.item-img {
+    display: block;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin: 12px auto 12px 0;
+    border: 2px solid #111;
+}
+#preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 2px solid #111;
+    margin-top: 10px;
+}
+
+.box-expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-in-out;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.box-expand.show {
+    max-height: 700px; /* 足够装下你的表单 */
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 动画 */
+section {
+    animation: slideUp 0.8s ease;
+}
+
+/* 默认初始状态：透明 + 在下方20px */
+.fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+/* 进入视口后变成正常位置 */
+.fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+}
