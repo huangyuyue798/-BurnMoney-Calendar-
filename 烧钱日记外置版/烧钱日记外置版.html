@@ -8,73 +8,78 @@
   <script src="烧钱日记.js"></script>
 </head>
 <body>
-
+<!-- 上方导航 -->
 <nav>
   <div class="title">烧钱日记&nbsp;&nbsp</div>
   <div class="nav-btn active" onclick="switchTab(0)">概览</div>
   <div class="nav-btn" onclick="switchTab(1)">我的资产</div>
   <div class="nav-btn" onclick="switchTab(2)">设置</div>
-
+  <!-- 设置日期 -->
   <div class="time-btn" onclick=reduceDay() style="right: 105px"><</div>
   <div id="time" class="time"></div>
   <div class="time-btn" onclick=addDay() style="right: 0">></div>
 </nav>
-
+<!-- 导言 -->
 <header>
   <p class="tagline">把每一笔消费变成每日思考</p>
 </header>
 
 <!-- 概览 -->
 <section id="tab-0">
-  <h2 class="fade-up">今日总日均花费</h2>
-  <div class="result fade-up" id="total-daily">¥ 0.00</div>
-
+  <!-- 日均 -->
+  <h2 >今日总日均花费</h2>
+  <div class=" result " id="total-daily">¥ 0.00</div>
+  <!-- 存款 -->
   <div  class="card-grid fade-up" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px;">
     <div class="card">
       <strong>当前存款</strong><br>
       <span id="balance-display" style="font-size:2.2rem;">¥ 0</span>
     </div>
+    <!-- 月薪 -->
     <div class="card">
       <strong>月薪</strong><br>
       <span id="salary-display" style="font-size:2.2rem;">¥ 0</span><br>
       <small>日均收入 ¥ <span id="daily-income">0</span></small>
     </div>
   </div>
-  <div class="fade-up">
-    <div id="goal-result" class="card" style="display:none"></div>
-  </div>
+
+  <div id="goal-result" class="card" style="display:none"></div>
+
 </section>
 
 <!-- 我的资产 -->
 <section id="tab-1" style="display:none">
+  <!-- 资产标题 -->
   <h2>资产<br>
     <span>资产价值：</span><span id="all_money"></span>
   </h2>
-  <button style="border: solid #ffffff" id="add_item">添加资产<br></button>
 
+  <button style="border: solid #ffffff" id="add_item">添加资产<br></button>
+  <!-- 添加资产 -->
   <div class="box-expand" id="expandBox">
-    <!-- 这里放你要拓展的页面内容 -->
     <div style="border:1px solid #ccc;padding:15px;margin-top:10px;">
       <div class="card">
+        <!-- 添加物品 -->
         <label>物品名称</label>
         <label for="name"></label><input type="text" id="name" placeholder="例如：Intel A380显卡">
-
+        <!-- 添加物品价格 -->
         <label>价格 (元)</label>
         <label for="price"></label><input type="number" id="price" placeholder="例如：580">
-
+        <!-- 分类 -->
         <label>分类</label>
         <label for="kind"></label><select id="kind">
         <option value="普通">普通消费</option>
-        <option value="手机">手机 / 平板</option>
-        <option value="笔记本">笔记本 / 电脑</option>
+        <option value="数码产品">数码产品</option>
+        <option value="奢侈品">奢侈品</option>
+        <option value="美妆">美妆</option>
+        <!-- 选择模式 -->
       </select>
-
         <label>模式</label>
         <label for="mode"></label><select id="mode">
-        <option value="1">模式一：免息分期（90/180天）</option>
-        <option value="2">模式二：买断月光（30天循环）</option>
+        <option value="1">模式一：免息分期（其他90天/数码180天）</option>
+        <option value="2">模式二：买断（30天循环）</option>
       </select>
-
+        <!-- 上传照片 -->
         <label>上传照片（可选）</label>
         <input type="file" id="photo" accept="image/*" onchange="previewPhoto()">
 
@@ -91,20 +96,25 @@
 
 <!-- 设置 -->
 <section id="tab-2" style="display:none">
+  <!-- 设置 -->
   <h2>基础设置</h2>
   <div class="settings">
+    <!-- 设置月薪 -->
     <div class="card">
       <label>月薪</label>
       <label for="set-salary"></label><input type="number" id="set-salary" placeholder="工资">
       <button onclick="updateSalary()">保存月薪</button>
     </div>
+    <!-- 设置存款 -->
     <div class="card">
-      <label>当前存款</label>
-      <label for="set-balance"></label><input type="number" id="set-balance" placeholder="存款">
-      <button onclick="updateBalance()">保存存款</button>
+      <label style="">当前存款</label>
+      <label for="set-balance"></label><input style="" type="number" id="set-balance" placeholder="存款">
+      <button onclick="updateBalance()" style="">保存存款</button>
     </div>
   </div>
+
   <h2>目标规划</h2>
+  <!-- 设置目标 -->
   <div class="card">
     <label>目标名称</label>
     <label for="goal-name"></label><input type="text" id="goal-name" placeholder="买车 / 买房">
@@ -114,13 +124,14 @@
 
     <button onclick="addGoal()">添加目标</button>
   </div>
+  <!-- 清空数据 -->
   <button onclick="clearAllLocalData()" style="margin-top:20px;padding:8px 20px;background:red;color:white;border:none;border-radius:4px;">
     一键清空所有本地数据
   </button>
 </section>
-
+<!-- 版本 -->
 <footer style="text-align:center;margin-top:80px;color:#666;">
-  烧钱日记 v2 • Python公式移植
+  烧钱日记 v2.5 • Python公式移植
 </footer>
 </body>
 </html>

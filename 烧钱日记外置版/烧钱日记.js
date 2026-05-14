@@ -1,7 +1,7 @@
 let items = [];
 let goals = [];
 let monthlySalary = 12000;
-let balance = 45000;
+let balance = { val: 45000, date: new Date().toISOString() };
 let currentPhotoBase64 = ''; // 图片存储
 
 // 图片预览
@@ -48,6 +48,7 @@ function addDay() {
     const now_time=new Date(now_time_str);
     now_time.setDate(now_time.getDate() + 1);
     document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+    renderAll();
 }
 
 function reduceDay(){
@@ -55,16 +56,18 @@ function reduceDay(){
     const now_time=new Date(now_time_str);
     now_time.setDate(now_time.getDate() - 1);
     document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+    renderAll();
 }
 
 function calculateDailyCost(item) {
-    const now = document.getElementById("time").innerText;
+    const now_time = document.getElementById("time").innerText;
+    const now=new Date(now_time);
     const purchaseDate = new Date(item.date);
     let daysPassed = Math.floor((now - purchaseDate) / (86400000));
 
     let period = 90;
     if (item.mode === 2) period = 30;
-    else if (item.kind === "手机" || item.kind === "笔记本") period = 180;
+    else if (item.kind === "数码产品") period = 180;
     let all_money = item.price;
     let more_day = period;
 
@@ -94,7 +97,7 @@ function addItem() {
         photo: currentPhotoBase64 || ''
     });
 
-    balance = Math.max(0, balance - price);
+    balance.val = Math.max(0, balance.val - price);
     currentPhotoBase64 = '';
     saveData();
     renderAll();
@@ -106,11 +109,11 @@ function addItem() {
 }
 
 function removeItem(index) {
-    if (confirm('确定删除此记录？')) {
+        balance.val += items[index].price;
+        balance.date = new Date().toISOString();
         items.splice(index, 1);
         saveData();
         renderAll();
-    }
 }
 
 function renderItems() {
@@ -130,13 +133,14 @@ function renderItems() {
         }
 
         div.innerHTML = `
-                ${imgHtml}
-                <strong>${item.name}</strong>　<span style="color:#666">(${item.kind})</span><br>
-                原价 ¥${item.price.toLocaleString()}　|　
-                <span style="color:#0066ff;font-weight:700">日均 ¥${daily.toFixed(2)}</span><br>
-                <small>购买于 ${new Date(item.date).toLocaleDateString('zh-CN')}</small>
-                <button onclick="removeItem(${i})" style="margin-top:12px;background:#cc0000;width:auto;padding:6px 14px;">删除</button>
-            `;
+    ${imgHtml ? `<img src="${item.photo}" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;" alt="">` : ''}
+    <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
+    <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
+    <div style="color:#e64340;font-size:15px;font-weight:bold;">¥${item.price.toLocaleString()}</div>
+    <div style="font-size:12px;color:#0066ff;margin:2px 0;">日均 ¥${daily.toFixed(2)}</div>
+    <div style="font-size:11px;color:#aaa;margin:4px 0;">${new Date(item.date).toLocaleDateString('zh-CN')}</div>
+    <button onclick="removeItem(${i})" style="width:100%;margin-top:6px;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">删除</button>
+`;
         container.appendChild(div);
     });
     let all_money=document.getElementById('all_money');
@@ -163,7 +167,7 @@ function calculateGoal() {
     let html = '<strong>目标达成预估：</strong><br><br>';
 
     goals.forEach((g, index) => {
-        const remaining = g.amount - balance;
+        const remaining = g.amount - balance.val;
         if (remaining <= 0) {
             html += `${g.name}：已达成！<br>`;
         } else {
@@ -201,8 +205,8 @@ function updateSalary() {
 function updateBalance() {
     const val = parseFloat(document.getElementById('set-balance').value);
     if (val >= 0) {
-        const now = new Date();
-        balance.push({ name, now});
+        balance.val = val;
+        balance.date = new Date().toISOString();
         saveData();
         renderAll();
         alert('存款已更新');
@@ -211,9 +215,17 @@ function updateBalance() {
 }
 
 function renderAll() {
-    document.getElementById('balance-display').textContent = `¥ ${balance.toLocaleString()}`;
+    const now_time = document.getElementById("time").innerText;
+    const now = new Date(now_time);
+    const purchaseDate = new Date(balance.date);
+    let daysPassed = Math.floor((now - purchaseDate) / 86400000)+1;
+    const dailyIncome = monthlySalary / 30;
+    const total = balance.val + daysPassed * dailyIncome;
+
+    document.getElementById('balance-display').textContent = `¥ ${total.toLocaleString()}`;
     document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
-    document.getElementById('daily-income').textContent = (monthlySalary / 30).toFixed(0);
+    document.getElementById('daily-income').textContent = dailyIncome.toFixed(0);
+
     renderItems();
     calculateGoal();
 }
@@ -233,7 +245,7 @@ function clearAllLocalData(){
     items = [];
     goals = [];
     monthlySalary = 0;
-    balance = 0;
+    balance = { val: 0, date: new Date().toISOString() };
 
     // 重新渲染页面
     renderAll();
@@ -257,6 +269,7 @@ function checkScrollShow() {
 window.addEventListener('scroll', checkScrollShow);
 
 window.onload = () => {
+    change_time();
     loadData();
     checkScrollShow();
     switchTab(0);

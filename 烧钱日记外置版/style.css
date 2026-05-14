@@ -1,12 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
+/*设置整体色调*/
 :root {
-    --bg: #f8f9fa;
+    --bg: #dadadc;
     --text: #111111;
     --accent: #0066ff;
 }
-
+/*默认所有*/
 * { margin: 0; padding: 0; box-sizing: border-box; }
+/*
+页面内字体
+整体背景字体色调
+边框
+*/
 body {
     font-family: 'Inter', system-ui, sans-serif;
     background: var(--bg);
@@ -16,10 +21,24 @@ body {
     max-width: 1000px;
     margin: 0 auto;
 }
-header { text-align: center; margin-bottom: 20px; margin-top:20px}
-h1 { font-size: 3.5rem; font-weight: 700; letter-spacing: -2px; }
-.tagline { font-size: 1.35rem; color: #555; }
-
+/*导言设置*/
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top:20px
+}
+/*设置大标题*/
+h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -2px;
+}
+/*设置导言字体*/
+.tagline {
+    font-size: 1.35rem;
+    color: #555;
+}
+/*设置导航栏*/
 nav {
     display: flex;
     gap: 0;
@@ -32,6 +51,7 @@ nav {
     border-bottom: 2px solid #ccc;
     position: fixed;
 }
+/*设置标题*/
 .title {
     padding: 0.3rem;
     background: white;
@@ -39,15 +59,17 @@ nav {
     font-weight: 700;
     transition: all 0.3s;
 }
+/*设置导航按钮样式*/
 .nav-btn {
     padding: 0.3rem;
     background: white;
     border-left: 2px solid #ccc;
     font-weight: 500;
     font-size: 1rem;
-    cursor: pointer; transition: all 0.3s;
+    cursor: pointer;
+    transition: all 0.3s;
 }
-
+/*设置时间按钮样式*/
 .time-btn {
     padding: 0.3rem;
     font-weight: 500;
@@ -57,6 +79,7 @@ nav {
     position: absolute;
 
 }
+/*设置时间样式*/
 .time{
     padding: 0.3rem;
     font-weight: 500;
@@ -66,17 +89,24 @@ nav {
     position: absolute;
     right: 18px;
 }
-
-.nav-btn.active, .nav-btn:hover { background: #111; color: white; }
-
-section { margin-bottom: 80px; }
-h2 { font-size: 2.2rem;
+/*设置导航按钮被触发时变色*/
+.nav-btn.active, .nav-btn:hover {
+    background: #111;
+    color: white;
+}
+/*设置页面底部与注脚距离*/
+section {
+    margin-bottom: 200px;
+}
+/*设置副标题样式*/
+h2 {
+    font-size: 2.2rem;
     margin-bottom: 20px;
     border-bottom: 0.2rem solid #111;
     padding-bottom: 10px;
     display: block;
 }
-
+/*设置卡片*/
 .card, .item {
     background: white;
     border: 2px solid #111;
@@ -84,18 +114,31 @@ h2 { font-size: 2.2rem;
     margin-bottom: 20px;
     transition: all 0.3s ease;
 }
-
+/*设置卡片浮动*/
 .card:hover, .item:hover ,.result:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
+/*设置统一选择按钮输入样式*/
 input, select, button {
-    padding: 14px; border: 2px solid #111; font-size: 1rem; margin: 8px 0; width: 100%;
+    padding: 14px;
+    border: 2px solid #111;
+    font-size: 1rem;
+    margin: 8px 0;
+    width: 100%;
 }
-button { background: #111; color: white; font-weight: 600; cursor: pointer;}
-button:hover { background: #0066ff; }
-
+/*额外设置按钮格式*/
+button {
+    background: #111;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+/*按钮鼠标事件*/
+button:hover {
+    background: #0066ff;
+}
+/*日均格式*/
 .result {
     font-size: 1.8rem;
     font-weight: 700;
@@ -107,23 +150,24 @@ button:hover { background: #0066ff; }
 }
 .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
-/* 图片样式（我加的） */
+/* 图片样式 */
 .item-img {
     display: block;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
-    margin: 12px auto 12px 0;
-    border: 2px solid #111;
+    margin: 10px auto 10px 0;
+    border: 2px solid #aaa8a8;
 }
+/* 显示图片样式 */
 #preview img {
     width: 100px;
     height: 100px;
     object-fit: cover;
-    border: 2px solid #111;
+    border: 2px solid #aaa8a8;
     margin-top: 10px;
 }
-
+/* 隐藏添加资产 */
 .box-expand {
     max-height: 0;
     overflow: hidden;
@@ -131,10 +175,13 @@ button:hover { background: #0066ff; }
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+/* 展示添加资产 */
 .box-expand.show {
-    max-height: 700px; /* 足够装下你的表单 */
+    max-height: 900px; /* 足够装下你的表单 */
 }
 
+/* 滑动 */
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -154,7 +201,7 @@ section {
 /* 默认初始状态：透明 + 在下方20px */
 .fade-up {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
     transition: all 0.6s ease;
 }
 
@@ -162,4 +209,29 @@ section {
 .fade-up.show {
     opacity: 1;
     transform: translateY(0);
+}
+/* 资产栏 */
+#items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px;
+    justify-content: flex-start;
+    background: #f5f5f5;
+}
+
+/* 资产栏 */
+.item {
+    width: calc(50% - 6px); /* 手机一行2张 */
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 1px 5px #eee;
+    box-sizing: border-box;
+}
+/* 电脑大屏改成一行4张 */
+@media (min-width: 768px) {
+    .item {
+        width: calc(25% - 9px);
+    }
 }
