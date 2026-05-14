@@ -20,14 +20,14 @@ function saveData() {
     localStorage.setItem('dailyItems', JSON.stringify(items));
     localStorage.setItem('dailyGoals', JSON.stringify(goals));
     localStorage.setItem('monthlySalary', monthlySalary);
-    localStorage.setItem('balance', balance);
+    localStorage.setItem('balance', JSON.stringify(balance));
 }
 
 function loadData() {
     if (localStorage.getItem('dailyItems')) items = JSON.parse(localStorage.getItem('dailyItems'));
     if (localStorage.getItem('dailyGoals')) goals = JSON.parse(localStorage.getItem('dailyGoals'));
     if (localStorage.getItem('monthlySalary')) monthlySalary = parseFloat(localStorage.getItem('monthlySalary'));
-    if (localStorage.getItem('balance')) balance = parseFloat(localStorage.getItem('balance'));
+    if (localStorage.getItem('balance')) balance = JSON.parse(localStorage.getItem('balance'));
     renderAll();
 }
 
@@ -37,8 +37,28 @@ function switchTab(n) {
     document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === n));
 }
 
-function calculateDailyCost(item) {
+function change_time() {
     const now = new Date();
+    const time=document.getElementById("time");
+    time.innerText = now.toLocaleDateString('zh-CN');
+}
+
+function addDay() {
+    const now_time_str = document.getElementById("time").innerText;
+    const now_time=new Date(now_time_str);
+    now_time.setDate(now_time.getDate() + 1);
+    document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+}
+
+function reduceDay(){
+    const now_time_str = document.getElementById("time").innerText;
+    const now_time=new Date(now_time_str);
+    now_time.setDate(now_time.getDate() - 1);
+    document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+}
+
+function calculateDailyCost(item) {
+    const now = document.getElementById("time").innerText;
     const purchaseDate = new Date(item.date);
     let daysPassed = Math.floor((now - purchaseDate) / (86400000));
 
@@ -127,10 +147,9 @@ function renderItems() {
 function addGoal() {
     const name = document.getElementById('goal-name').value.trim() || '未命名目标';
     const amount = parseFloat(document.getElementById('goal-amount').value);
-
     if (!amount || amount <= 0) return alert('请输入目标金额');
 
-    goals.push({ name, amount });
+    goals.push({ name, amount});
     saveData();
     calculateGoal();
     document.getElementById('goal-name').value = '';
@@ -140,8 +159,6 @@ function addGoal() {
 
 function calculateGoal() {
     const dailyIncome = monthlySalary / 30;
-    const dailyEat = 80;
-    const netDaily = dailyIncome - dailyEat;
 
     let html = '<strong>目标达成预估：</strong><br><br>';
 
@@ -150,7 +167,7 @@ function calculateGoal() {
         if (remaining <= 0) {
             html += `${g.name}：已达成！<br>`;
         } else {
-            const days = Math.ceil(remaining / netDaily);
+            const days = Math.ceil(remaining / dailyIncome);
             html += `${g.name}：约 <strong>${days}</strong> 天（${Math.ceil(days/30)} 个月）<br>`;
         }
         // 重点修复：调用 removeGoal 并传 index
@@ -184,7 +201,8 @@ function updateSalary() {
 function updateBalance() {
     const val = parseFloat(document.getElementById('set-balance').value);
     if (val >= 0) {
-        balance = val;
+        const now = new Date();
+        balance.push({ name, now});
         saveData();
         renderAll();
         alert('存款已更新');
@@ -242,6 +260,7 @@ window.onload = () => {
     loadData();
     checkScrollShow();
     switchTab(0);
+    change_time();
     document.getElementById('add_item').addEventListener('click', function () {
         document.getElementById('expandBox').classList.toggle('show');
     });
