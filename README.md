@@ -32,4 +32,21 @@ BurnMoney Calendar tracks your assets in real-time, automatically calculates you
 - 作为大一全栈练手项目，深入掌握 HTML/CSS/JavaScript 和移动端开发
 - 为后续转为微信小程序版本积累业务逻辑
 
----
+### 后续开发计划（Roadmap）
+- 美化 UI / 暗黑模式切换
+- 增加更多消费分类与标签
+- 支持数据导出（JSON / Excel）
+- 接入微信小程序版本
+- 接入微信云开发实现多端数据同步
+- 添加预算提醒与月度总结功能
+
+### 贡献指南
+欢迎同学们 Star、Fork 和提交 Issue / PR！
+这是我大一的练手项目，如果你有好的 UI 设计建议、功能想法或代码优化方案，随时欢迎讨论！
+
+### 作者
+黄宇悦
+大一学生 · 前端 / 全栈学习者
+
+### 致谢
+感谢所有帮助和鼓励我的朋友们！
