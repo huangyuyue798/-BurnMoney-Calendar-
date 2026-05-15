@@ -182,14 +182,25 @@ function renderItems() {
         }
         //div标签放入元素
         div.innerHTML = `
-    ${imgHtml ? `<img src="${item.photo}" style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:8px;" alt="">` : ''}
+    ${imgHtml ? `<img src="${item.photo}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;margin-bottom:8px;display:block;" alt="">` : ''}
     <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
     <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
     <div style="color:#e64340;font-size:15px;font-weight:bold;">¥${item.price.toLocaleString()}</div>
     <div style="font-size:12px;color:#0066ff;margin:2px 0;">日均 ¥${daily.toFixed(2)}</div>
     <div style="font-size:11px;color:#aaa;margin:4px 0;">${new Date(item.date).toLocaleDateString('zh-CN')}</div>
-    <button onclick="removeItem(${i})" style="width:100%;margin-top:6px;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">删除</button>
-`;
+    <div style="display:flex;gap:10px;margin-top:6px;">
+        <button onclick="removeItem(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">删除</button>
+        <button onclick="togglePanel(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">出售</button>
+    </div>
+    <div 
+    id="sellPanel_${i}" 
+    style="overflow:hidden; height:0; transition:height 0.3s linear; margin-top:0; padding:0; background:#f5f5f5; border-radius:6px;">
+  <!-- 展开内容 -->
+        <div style="">
+            <input type="text" id="sell_item_${i}" placeholder="580">
+            <bottle onclick="satellite(${i})" style="cursor: pointer; flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">确认出售</button>
+        </div>
+    </div>`;
         //放入容器中
         container.appendChild(div);
     });
@@ -200,6 +211,34 @@ function renderItems() {
     //取日均标签放入日均金额
     document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
 }
+
+function togglePanel(idx) {
+    let panel = document.getElementById('sellPanel_' + idx);
+
+    if (panel.style.height === '0px' || panel.style.height === '') {
+        // 展开：自动计算内容高度 + 线性动画
+        panel.style.height = panel.scrollHeight + 'px';
+        panel.style.paddingTop = 'px';
+        panel.style.paddingBottom = 'px';
+    } else {
+        // 收起
+        panel.style.height = '0px';
+        panel.style.paddingTop = '0';
+        panel.style.paddingBottom = '0';
+    }
+}
+
+//出售
+function satellite(index){
+    //添加存款
+    const val = parseFloat(document.getElementById('sell_item_'+index).value);
+    balance.val += val;
+    balance.date = new Date().toISOString();
+    items.splice(index, 1); // 删除目标数组里的项
+    saveData();//保存
+    renderAll();//读取
+}
+
 //添加目标
 function addGoal() {
     //取goal当前值

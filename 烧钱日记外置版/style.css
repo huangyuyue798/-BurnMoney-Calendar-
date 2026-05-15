@@ -181,6 +181,16 @@ button:hover {
     max-height: 900px; /* 足够装下你的表单 */
 }
 
+.box-sell.expand {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.8s ease-in-out;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.box-sell.show {
+    max-height: 20px; /* 足够装下你的表单 */
+}
 /* 滑动 */
 @keyframes slideUp {
     from {
