@@ -80,36 +80,61 @@ function reduceDay(){
 }
 //计算日均
 function calculateDailyCost(item) {
-    //获取当前时间
+    // 获取时间
     const now_time = document.getElementById("time").innerText;
-    //转换当前时间
-    const now=new Date(now_time);
-    //转换json数据中的时间
+    const now = new Date(now_time);
     const purchaseDate = new Date(item.date);
-    //计算过去的时间
-    let daysPassed = Math.floor((now - purchaseDate) / (86400000));
-    //匹配模式
-    let period = 90;
-    //更改为买断式
-    if (item.mode === 2) period = 30;
-    //数码产品生命周期更长匹配为180天
-    else if (item.kind === "数码产品") period = 180;
-    //传参数方便后续计算
-    let all_money = item.price;
-    //传参数方便后续计算
-    let more_day = period;
-    //计算累加天数
-    if (daysPassed >= period) {
-        more_day = period + period * Math.ceil(daysPassed / period);
+
+    // 已使用天数（+1修正，第一天就开始递减）
+    let daysPassed = Math.floor((now - purchaseDate) / 86400000) + 1;
+    daysPassed = Math.max(daysPassed, 1);
+
+    // 折旧周期设定（你的原有规则不变）
+    let cycle = 90;
+    if (item.mode === 2) cycle = 30;          // 买断30天
+    else if (item.kind === "数码产品") cycle = 180; // 数码180天
+
+    const totalPrice = item.price;
+    const baseAvg = totalPrice / cycle; // 基础日均
+
+    // 线性递减参数（可根据喜好调整）
+    const firstDayCost = baseAvg * 1.9;  // 第一天最高成本
+    const absoluteMin = baseAvg * 0.05;  // 绝对底线，永远不会低于这个值
+    const stage1Decrease = (firstDayCost - baseAvg) / (cycle - 1); // 阶段1每天减少的金额
+
+    let dailyCost;
+
+    if (daysPassed <= cycle) {
+        // 阶段1：快速递减（0~周期天）
+        dailyCost = firstDayCost - (daysPassed - 1) * stage1Decrease;
+    } else if (daysPassed <= 2 * cycle) {
+        // 阶段2：中速递减（周期~2×周期天）
+        const stage2Start = baseAvg;
+        const daysInStage2 = daysPassed - cycle;
+        dailyCost = stage2Start - daysInStage2 * (stage1Decrease / 2);
+    } else if (daysPassed <= 4 * cycle) {
+        // 阶段3：慢速递减（2×周期~4×周期天）
+        const stage3Start = baseAvg - cycle * (stage1Decrease / 2);
+        const daysInStage3 = daysPassed - 2 * cycle;
+        dailyCost = stage3Start - daysInStage3 * (stage1Decrease / 4);
+    } else {
+        // 阶段4：极慢速递减（4×周期天以后）
+        const stage4Start = baseAvg - cycle * (stage1Decrease / 2) - 2 * cycle * (stage1Decrease / 4);
+        const daysInStage4 = daysPassed - 4 * cycle;
+        dailyCost = stage4Start - daysInStage4 * (stage1Decrease / 10);
     }
-    //计算最多日均并返回
-    return all_money * (1 + 0.01 * (more_day - 2 * daysPassed + 1)) / period;
+
+    // 强制锁住绝对底线，永远不为0
+    return Math.max(dailyCost, absoluteMin);
 }
+
 //添加资产
 function addItem() {
     //提取物品名称
     const name = document.getElementById('name').value.trim() || '未命名物品';
     //提取物品价格
+    const dateInput = document.getElementById('date').value;
+    const date = dateInput ?new Date(dateInput) : new Date();
     const price = parseFloat(document.getElementById('price').value);
     //提取物品种类
     const kind = document.getElementById('kind').value;
@@ -123,7 +148,7 @@ function addItem() {
         price: price,
         kind: kind,
         mode: mode,
-        date: new Date().toISOString(),
+        date: date,
         photo: currentPhotoBase64 || ''
     });
     //减去存款
@@ -208,10 +233,30 @@ function renderItems() {
     let all_money=document.getElementById('all_money');
     //放入总金额数值
     all_money.innerText=all_item_money;
+    const warningSpan=document.getElementById('warning');
+    // 基础样式（所有级别通用）
+    const baseStyle = "display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-left: 5px;";
+    const dailySalary = monthlySalary / 30;
     //取日均标签放入日均金额
     document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
+    if (totalDaily > dailySalary * 0.95) {
+        // 严重警告（红色）
+        warningSpan.style.cssText = baseStyle + "background-color: #fff1f0; color: #f5222d; border: 1px solid #ffa39e;";
+        warningSpan.textContent = "严重超标";
+        return 3;
+    } else if (totalDaily > dailySalary * 0.7) {
+        // 一般警告（橙色）
+        warningSpan.style.cssText = baseStyle + "background-color: #fff7e6; color: #fa8c16; border: 1px solid #ffd591;";
+        warningSpan.textContent = "接近上限";
+        return 2;
+    } else {
+        // 正常（蓝色）
+        warningSpan.style.cssText = baseStyle + "background-color: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff;";
+        warningSpan.textContent = "正常";
+        return 1;
+    }
 }
-
+//动效
 function togglePanel(idx) {
     let panel = document.getElementById('sellPanel_' + idx);
 
@@ -330,7 +375,6 @@ function renderAll() {
     const dailyIncome = monthlySalary / 30;
     //计算金额
     const total = balance.val + daysPassed * dailyIncome;
-
     //取得ID并放入参数
     document.getElementById('balance-display').textContent = `¥ ${total.toLocaleString()}`;
     document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
@@ -339,6 +383,7 @@ function renderAll() {
     renderItems();
     //计算目标
     calculateGoal();
+    renderTrendCharts();
 }
 
 // 一键清空本地所有数据
