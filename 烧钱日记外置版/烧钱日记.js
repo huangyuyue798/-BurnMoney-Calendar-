@@ -383,7 +383,6 @@ function renderAll() {
     renderItems();
     //计算目标
     calculateGoal();
-    renderTrendCharts();
 }
 
 // 一键清空本地所有数据

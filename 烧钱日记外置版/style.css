@@ -35,11 +35,13 @@ h1 {
 }
 /*设置导言字体*/
 .tagline {
+    margin-top: 30px ;
     font-size: 1.35rem;
     color: #555;
 }
 /*设置导航栏*/
 nav {
+    margin-top:10px ;
     display: flex;
     gap: 0;
     left: 0;
@@ -48,8 +50,30 @@ nav {
     background: white;
     z-index: 9999;
     justify-content: left;
-    border-bottom: 2px solid #ccc;
     position: fixed;
+}
+nav {
+    background: #ffffff;
+    border-radius: 16px; /* 苹果黄金圆角不变 */
+    border: black solid 1px;
+    padding: 5px;
+    transition: all 0.3s ease;
+    /* 多层重影 + 上下明暗光影 炸裂3D凸台 */
+    box-shadow:
+            0 6px 15px rgba(0, 0, 0, 0.18),
+            0 3px 6px rgba(0, 0, 0, 0.12),
+            0 1px 2px rgba(0, 0, 0, 0.08),
+            inset 0 2px 2px rgba(255,255,255,0.8),
+            inset 0 -2px 2px rgba(0,0,0,0.06);
+}
+nav:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow:
+            0 10px 25px rgba(0, 0, 0, 0.25),
+            0 5px 10px rgba(0, 0, 0, 0.18),
+            0 2px 4px rgba(0, 0, 0, 0.12),
+            inset 0 2px 2px rgba(255,255,255,0.9),
+            inset 0 -2px 2px rgba(0,0,0,0.08);
 }
 /*设置标题*/
 .title {
@@ -61,13 +85,27 @@ nav {
 }
 /*设置导航按钮样式*/
 .nav-btn {
+    background: #ffffff;
+    border-radius: 16px; /* 苹果黄金圆角不变 */
+    border: black solid 1px;
     padding: 0.3rem;
-    background: white;
-    border-left: 2px solid #ccc;
-    font-weight: 500;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+    /* 多层重影 + 上下明暗光影 炸裂3D凸台 */
+    box-shadow:
+            0 12px 30px rgba(0, 0, 0, 0.18),
+            0 6px 12px rgba(0, 0, 0, 0.12),
+            0 2px 4px rgba(0, 0, 0, 0.08),
+            inset 0 3px 3px rgba(255,255,255,0.8),
+            inset 0 -3px 3px rgba(0,0,0,0.06);
+}
+.nav-btn:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.25),
+            0 10px 20px rgba(0, 0, 0, 0.18),
+            0 4px 8px rgba(0, 0, 0, 0.12),
+            inset 0 4px 4px rgba(255,255,255,0.9),
+            inset 0 -4px 4px rgba(0,0,0,0.08);
 }
 /*设置时间按钮样式*/
 .time-btn {
@@ -89,11 +127,8 @@ nav {
     position: absolute;
     right: 18px;
 }
-/*设置导航按钮被触发时变色*/
-.nav-btn.active, .nav-btn:hover {
-    background: #111;
-    color: white;
-}
+
+
 /*设置页面底部与注脚距离*/
 section {
     margin-bottom: 200px;
@@ -107,12 +142,12 @@ h2 {
     display: block;
 }
 /*设置卡片*/
-.card, .item ,.result{
+.card, .item ,.result,input,select{
     background: #ffffff;
     border-radius: 16px; /* 苹果黄金圆角不变 */
-    border: none;
-    padding: 28px;
-    margin-bottom: 20px;
+    border: black solid 1px;
+    padding: 10px;
+    margin-bottom: 10px;
     transition: all 0.3s ease;
     /* 多层重影 + 上下明暗光影 炸裂3D凸台 */
     box-shadow:
@@ -124,7 +159,7 @@ h2 {
 }
 
 /* 悬浮直接拉满立体效果 */
-.card:hover, .item:hover , .result:hover{
+.card:hover, .item:hover , .result:hover,input:hover,select:hover{
     transform: translateY(-6px) scale(1.01);
     box-shadow:
             0 20px 50px rgba(0, 0, 0, 0.25),
@@ -140,32 +175,6 @@ input[type="date"] {
     -webkit-appearance: none;
     cursor: pointer;
     color: #333;
-}
-input,
-select {
-    /* 黄金圆角：苹果常用 10–12px，最舒服 */
-    border-radius: 12px;
-
-    /* 内边距：上下 10px 左右 14px，手感刚好 */
-    padding: 10px 14px;
-
-    /* 边框：浅灰、不刺眼 */
-    border: 1px solid #d1d5db;
-
-    /* 字体：苹果系统字体，干净 */
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 15px;
-
-    /* 宽度、外边距 */
-    width: 220px;
-    margin: 6px 0 12px 0;
-
-    /* 背景白一点 */
-    background: #fafafa;
-
-    /* 过渡顺滑 */
-    outline: none;
-    transition: all 0.25s ease;
 }
 input:focus,
 select:focus {
@@ -195,7 +204,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 /*设置统一选择按钮输入样式*/
 input, select, button {
-    padding: 10px 18px;
+    padding: 10px ;
     border: 2px solid #111;
     font-size: 1rem;
     margin: 8px 0;
@@ -316,13 +325,12 @@ section {
     gap: 12px;
     padding: 10px;
     justify-content: flex-start;
-    background: #f5f5f5;
 }
 
 /* 资产栏 */
 .item {
     width: calc(50% - 6px); /* 手机一行2张 */
-    background: #fff;
+    background: #fbfbfb;
     border-radius: 10px;
     padding: 10px;
     box-shadow: 0 1px 5px #eee;
