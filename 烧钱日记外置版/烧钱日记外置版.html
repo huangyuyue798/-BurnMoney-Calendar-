@@ -31,9 +31,11 @@
   <div class="result" id="total-daily">¥ 0.00</div>
   <!-- 存款 -->
   <div  class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px;">
-    <div class="card">
+    <div class="card" id="balance">
       <strong>当前存款</strong><br>
-      <span id="balance-display" style="font-size:2.2rem;">¥ 0</span>
+      <span id="balance-display" style="font-size:2.2rem; ">¥ 0</span>
+      <br>
+      <small id="day-add"></small>
     </div>
     <!-- 月薪 -->
     <div class="card">
@@ -50,10 +52,15 @@
 <!-- 我的资产 -->
 <section id="tab-1" style="display:none">
   <!-- 资产标题 -->
-  <h2>资产<br>
-    <span>资产价值：</span><span id="all_money"></span>
-  </h2>
-
+  <div class="card" style="font-size: 2rem;font-weight: bold; ">资产总览<br>
+    <span class="card" style="font-size: 1rem; ">资产价值：<span id="all_money"></span></span>
+    <span class="card" style="font-size: 1rem; text-align: right">日均成本：<span id="total-daily1"></span><small id="total_yesterday"></small></span>
+  </div>
+  <div style="display: flex; gap: 8px;" class="card">
+    <div class="nav-btn active" onclick="switchFilter('all')">全部</div>
+    <div class="nav-btn" onclick="switchFilter('own')">拿下中</div>
+    <div class="nav-btn" onclick="switchFilter('sold')">已出手</div>
+  </div>
   <button style="border: solid #ffffff" id="add_item">添加资产<br></button>
   <!-- 添加资产 -->
   <div class="box-expand" id="expandBox">
@@ -95,6 +102,7 @@
   </div>
 
   <div id="items-list" class="fade-up"></div>
+  <div id="sell-list" class="fade-up"></div>
 </section>
 
 <!-- 设置 -->
@@ -113,6 +121,11 @@
       <label style="">当前存款</label>
       <label for="set-balance"></label><input style="" type="number" id="set-balance" placeholder="存款">
       <button onclick="updateBalance()" style="">保存存款</button>
+    </div>
+    <div class="card">
+      <label style="">伙食费</label>
+      <label for="set-eat"></label><input style="" type="number" id="set-eat" placeholder="伙食费">
+      <button onclick="update_eat()" style="">保存伙食费</button>
     </div>
   </div>
 

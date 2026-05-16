@@ -1,8 +1,12 @@
 let items = [];
+let sell_items = [];
 let goals = [];
-let monthlySalary = 12000;
-let balance = { val: 45000, date: new Date().toISOString() };
+let monthlySalary = 0;
+let balance = { val: 0, date: new Date().toISOString() };
 let currentPhotoBase64 = ''; // 图片存储
+let dailyIncome=0;
+let eat=0;
+let total=0;
 
 // 图片预览
 function previewPhoto() {
@@ -23,6 +27,7 @@ function saveData() {
     localStorage.setItem('dailyItems', JSON.stringify(items));
     localStorage.setItem('dailyGoals', JSON.stringify(goals));
     localStorage.setItem('monthlySalary', monthlySalary);
+    localStorage.setItem('eat', eat);
     localStorage.setItem('balance', JSON.stringify(balance));
 }
 //解析本地
@@ -31,6 +36,7 @@ function loadData() {
     if (localStorage.getItem('dailyGoals')) goals = JSON.parse(localStorage.getItem('dailyGoals'));
     if (localStorage.getItem('monthlySalary')) monthlySalary = parseFloat(localStorage.getItem('monthlySalary'));
     if (localStorage.getItem('balance')) balance = JSON.parse(localStorage.getItem('balance'));
+    if (localStorage.getItem('eat')) eat = parseFloat(localStorage.getItem('eat'));
     //解析本地数据后设置全局数据
     renderAll();
 }
@@ -78,56 +84,44 @@ function reduceDay(){
     //再次读取全部
     renderAll();
 }
-//计算日均
-function calculateDailyCost(item) {
-    // 获取时间
-    const now_time = document.getElementById("time").innerText;
-    const now = new Date(now_time);
-    const purchaseDate = new Date(item.date);
-
-    // 已使用天数（+1修正，第一天就开始递减）
-    let daysPassed = Math.floor((now - purchaseDate) / 86400000) + 1;
-    daysPassed = Math.max(daysPassed, 1);
-
-    // 折旧周期设定（你的原有规则不变）
-    let cycle = 90;
-    if (item.mode === 2) cycle = 30;          // 买断30天
-    else if (item.kind === "数码产品") cycle = 180; // 数码180天
-
-    const totalPrice = item.price;
-    const baseAvg = totalPrice / cycle; // 基础日均
-
-    // 线性递减参数（可根据喜好调整）
-    const firstDayCost = baseAvg * 1.9;  // 第一天最高成本
-    const absoluteMin = baseAvg * 0.05;  // 绝对底线，永远不会低于这个值
-    const stage1Decrease = (firstDayCost - baseAvg) / (cycle - 1); // 阶段1每天减少的金额
-
-    let dailyCost;
-
-    if (daysPassed <= cycle) {
-        // 阶段1：快速递减（0~周期天）
-        dailyCost = firstDayCost - (daysPassed - 1) * stage1Decrease;
-    } else if (daysPassed <= 2 * cycle) {
-        // 阶段2：中速递减（周期~2×周期天）
-        const stage2Start = baseAvg;
-        const daysInStage2 = daysPassed - cycle;
-        dailyCost = stage2Start - daysInStage2 * (stage1Decrease / 2);
-    } else if (daysPassed <= 4 * cycle) {
-        // 阶段3：慢速递减（2×周期~4×周期天）
-        const stage3Start = baseAvg - cycle * (stage1Decrease / 2);
-        const daysInStage3 = daysPassed - 2 * cycle;
-        dailyCost = stage3Start - daysInStage3 * (stage1Decrease / 4);
-    } else {
-        // 阶段4：极慢速递减（4×周期天以后）
-        const stage4Start = baseAvg - cycle * (stage1Decrease / 2) - 2 * cycle * (stage1Decrease / 4);
-        const daysInStage4 = daysPassed - 4 * cycle;
-        dailyCost = stage4Start - daysInStage4 * (stage1Decrease / 10);
+//计算物品日均
+function calculateDailyCost(item,daysPassed) {
+    //获取当前时间
+    //匹配模式
+    let period = 90;
+    //更改为买断式
+    if (item.mode === 2) period = 30;
+    //数码产品生命周期更长匹配为180天
+    else if (item.kind === "数码产品") period = 180;
+    if(daysPassed>=period){
+        return 0;
     }
-
-    // 强制锁住绝对底线，永远不为0
-    return Math.max(dailyCost, absoluteMin);
+    //传参数方便后续计算
+    let all_money = item.price;
+    //计算最多日均并返回
+    return all_money * (1 + 1 / period * (period - 2 * daysPassed + 1)) / period;
 }
-
+//显示每日涨跌
+function day_add(){
+    let dailyIncome = monthlySalary / 30-eat;
+    const today = new Date(document.getElementById('time').innerText);
+    today.setDate(today.getDate() + 1);
+    const today_str = today.toISOString().split('T')[0];
+    items.forEach((item, ) =>{
+        const itemDateStr = new Date(item.date).toISOString().split('T')[0];
+        if(itemDateStr === today_str){
+            dailyIncome -= item.price;
+        }
+    });
+    const day_add = document.getElementById("day-add");
+    if(dailyIncome>0){
+        day_add.innerText ="▲"+dailyIncome.toFixed(2);
+        day_add.style.color = "rgb(237 28 36 / 0.84)";
+    }else {
+        day_add.innerText = "▼"+dailyIncome.toFixed(2);
+        day_add.style.color = '#00A352';
+    }
+}
 //添加资产
 function addItem() {
     //提取物品名称
@@ -187,11 +181,20 @@ function renderItems() {
     //将全部日均置0
     let totalDaily = 0;
     let all_item_money = 0;
+    let total_yesterday=0;
     //取到当前items的所有数据
     items.forEach((item, i) => {
+        // 获取时间
+        const now_time = document.getElementById("time").innerText;
+        const now = new Date(now_time);
+        const purchaseDate = new Date(item.date);
+        // 已使用天数（+1修正，第一天就开始递减）
+        let daysPassed = Math.ceil((now - purchaseDate) / 86400000);
         //计算每件物品的日均价格
-        const daily = calculateDailyCost(item);
+        const daily = calculateDailyCost(item,daysPassed);
+        const yesterday = daily - calculateDailyCost(item,daysPassed+1);
         //全部日均价格
+        total_yesterday += yesterday;
         totalDaily += daily;
         //取到当前标签
         const div = document.createElement('div');
@@ -211,24 +214,52 @@ function renderItems() {
     <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
     <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
     <div style="color:#e64340;font-size:15px;font-weight:bold;">¥${item.price.toLocaleString()}</div>
-    <div style="font-size:12px;color:#0066ff;margin:2px 0;">日均 ¥${daily.toFixed(2)}</div>
-    <div style="font-size:11px;color:#aaa;margin:4px 0;">${new Date(item.date).toLocaleDateString('zh-CN')}</div>
-    <div style="display:flex;gap:10px;margin-top:6px;">
-        <button onclick="removeItem(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">删除</button>
-        <button onclick="togglePanel(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">出售</button>
-    </div>
-    <div 
-    id="sellPanel_${i}" 
-    style="overflow:hidden; height:0; transition:height 0.3s linear; margin-top:0; padding:0; background:#f5f5f5; border-radius:6px;">
-  <!-- 展开内容 -->
-        <div style="">
-            <input type="text" id="sell_item_${i}" placeholder="580">
-            <bottle onclick="satellite(${i})" style="cursor: pointer; flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">确认出售</button>
-        </div>
-    </div>`;
-        //放入容器中
+    <div style="font-size:12px;color:#0066ff;margin:2px 0;">
+  日均 ¥${daily.toFixed(2)}
+  <small id="daily_down_item${i}" style="margin-left:8px;"></small>
+</div>
+<div style="font-size:11px;color:#aaa;margin:4px 0;">
+  ${new Date(item.date).toLocaleDateString('zh-CN')}
+</div>
+<div style="display:flex;gap:10px;margin-top:6px;">
+  <button onclick="removeItem(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;padding:6px 0;font-size:12px;">删除</button>
+  <button onclick="togglePanel(${i})" style="flex:1;background:#00A352;color:#fff;border:none;padding:6px 0;font-size:12px;">出售</button>
+</div>
+<div 
+  id="sellPanel_${i}" 
+  style="overflow:hidden; height:0; transition:height 0.3s ease; margin-top:5px; background:#f5f5f5; border-radius:12px;">
+  <div style="">
+    <input type="text" id="sell_item_${i}" placeholder="${item.price.toLocaleString()}">
+    <button onclick="satellite(${i})" style="background: #FFB800">确认出售</button>
+  </div>
+</div>`;
+
         container.appendChild(div);
+
+        // 赋值 + 颜色
+        const el = document.getElementById('daily_down_item'+i);
+        if(yesterday !== 0){
+            el.innerText = '▼' + yesterday.toFixed(2);
+            el.style.color = 'rgb(237 28 36 / 0.84)';
+            el.style.marginLeft = '6px';
+        }else {
+            el.innerText='拿下';
+            el.style.color = '#00A352';
+            el.style.marginLeft = '6px';
+        }
     });
+    const tys=document.getElementById("total_yesterday")
+
+    if(total_yesterday>0){
+        tys.innerHTML="▼"+total_yesterday.toFixed(2);
+        tys.style.color = 'rgb(237 28 36 / 0.84)';
+        tys.style.marginLeft = '6px';
+    }else {
+        tys.innerText='轻轻松松';
+        tys.style.color = '#00A352';
+        tys.style.marginLeft = '6px';
+    }
+
     //遍历后取总金额标签
     let all_money=document.getElementById('all_money');
     //放入总金额数值
@@ -236,9 +267,14 @@ function renderItems() {
     const warningSpan=document.getElementById('warning');
     // 基础样式（所有级别通用）
     const baseStyle = "display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-left: 5px;";
-    const dailySalary = monthlySalary / 30;
+    const dailySalary = monthlySalary / 30-eat;
     //取日均标签放入日均金额
     document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
+    document.getElementById('total-daily1').textContent = `¥ ${totalDaily.toFixed(2)}`;
+    if(eat!==0){
+        document.getElementById('total-daily').textContent += "+"
+        document.getElementById('total-daily').textContent += `${eat.toFixed()}`;
+    }
     if (totalDaily > dailySalary * 0.95) {
         // 严重警告（红色）
         warningSpan.style.cssText = baseStyle + "background-color: #fff1f0; color: #f5222d; border: 1px solid #ffa39e;";
@@ -272,18 +308,18 @@ function togglePanel(idx) {
         panel.style.paddingBottom = '0';
     }
 }
-
 //出售
 function satellite(index){
     //添加存款
-    const val = parseFloat(document.getElementById('sell_item_'+index).value);
+    const sell_price=document.getElementById('sell_item_'+index).value.trim()||items[index].price;
+    const val = parseFloat(sell_price);
     balance.val += val;
     balance.date = new Date().toISOString();
+    sell_items.push();
     items.splice(index, 1); // 删除目标数组里的项
     saveData();//保存
     renderAll();//读取
 }
-
 //添加目标
 function addGoal() {
     //取goal当前值
@@ -361,8 +397,19 @@ function updateBalance() {
     //设置为空
     document.getElementById('set-balance').value = '';
 }
-//显示与读取数据
-function renderAll() {
+//设置伙食费
+function update_eat() {
+    const up_eat=document.getElementById('set-eat').value;
+    if (up_eat > 0) {
+        eat=up_eat;
+        saveData();
+        renderAll();
+        alert("伙食费已更新")
+    }
+    document.getElementById('set-eat').value = '';
+}
+//计算每日薪水和总余额
+function update_dailyIncome() {
     //取到当前页面时间
     const now_time = document.getElementById("time").innerText;
     //转换时间
@@ -372,19 +419,24 @@ function renderAll() {
     //计算过去时间
     let daysPassed = Math.floor((now - purchaseDate) / 86400000)+1;
     //计算月薪水
-    const dailyIncome = monthlySalary / 30;
+    dailyIncome = monthlySalary / 30-eat;
     //计算金额
-    const total = balance.val + daysPassed * dailyIncome;
+    total = balance.val + daysPassed * dailyIncome;
+}
+//显示与读取数据
+function renderAll() {
+    //计算每日薪水和总余额
+    update_dailyIncome()
     //取得ID并放入参数
-    document.getElementById('balance-display').textContent = `¥ ${total.toLocaleString()}`;
+    document.getElementById('balance-display').textContent = `¥ ${total.toFixed(2)}`;
     document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
     document.getElementById('daily-income').textContent = dailyIncome.toFixed(0);
     //读取并显示资产
     renderItems();
     //计算目标
     calculateGoal();
+    day_add();
 }
-
 // 一键清空本地所有数据
 function clearAllLocalData(){
     if(!confirm('⚠️ 确定要清空所有数据？消费记录、存钱目标、月薪、存款全部都会删除，不可恢复！')){
@@ -395,18 +447,19 @@ function clearAllLocalData(){
     localStorage.removeItem('dailyGoals');
     localStorage.removeItem('monthlySalary');
     localStorage.removeItem('balance');
+    localStorage.removeItem('eat');
 
     // 清空内存变量
     items = [];
     goals = [];
     monthlySalary = 0;
+    eat=0;
     balance = { val: 0, date: new Date().toISOString() };
 
     // 重新渲染页面
     renderAll();
     alert('已清空所有本地数据');
 }
-
 // 资产页面 展开/收起 功能
 // 滚动触发从下滑入
 function checkScrollShow() {
@@ -419,10 +472,8 @@ function checkScrollShow() {
         }
     });
 }
-
 // 滚动时一直检测
 window.addEventListener('scroll', checkScrollShow);
-
 window.onload = () => {
     //首先确定系统时间
     change_time();
