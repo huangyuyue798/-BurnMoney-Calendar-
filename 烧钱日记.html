@@ -4,788 +4,346 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>烧钱日记</title>
-    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    /*设置整体色调*/
-    :root {
-        --bg: #dadadc;
-        --text: #111111;
-        --accent: #0066ff;
-    }
-    /*默认所有*/
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    /*
-    页面内字体
-    整体背景字体色调
-    边框
-    */
-    body {
-        font-family: 'Inter', system-ui, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        line-height: 1.6;
-        padding: 40px 20px;
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-    /*导言设置*/
-    header {
-        text-align: center;
-        margin-bottom: 20px;
-        margin-top:20px
-    }
-    /*设置大标题*/
-    h1 {
-        font-size: 3.5rem;
-        font-weight: 700;
-        letter-spacing: -2px;
-    }
-    /*设置导言字体*/
-    .tagline {
-        font-size: 1.35rem;
-        color: #555;
-    }
-    /*设置导航栏*/
-    nav {
-        display: flex;
-        gap: 0;
-        left: 0;
-        top:0 ;
-        width: 100%;
-        background: white;
-        z-index: 9999;
-        justify-content: left;
-        border-bottom: 2px solid #ccc;
-        position: fixed;
-    }
-    /*设置标题*/
-    .title {
-        padding: 0.3rem;
-        background: white;
-        font-size: 1rem;
-        font-weight: 700;
-        transition: all 0.3s;
-    }
-    /*设置导航按钮样式*/
-    .nav-btn {
-        padding: 0.3rem;
-        background: white;
-        border-left: 2px solid #ccc;
-        font-weight: 500;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    /*设置时间按钮样式*/
-    .time-btn {
-        padding: 0.3rem;
-        font-weight: 500;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        position: absolute;
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    }
-    /*设置时间样式*/
-    .time{
-        padding: 0.3rem;
-        font-weight: 500;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        position: absolute;
-        right: 18px;
-    }
-    /*设置导航按钮被触发时变色*/
-    .nav-btn.active, .nav-btn:hover {
-        background: #111;
-        color: white;
-    }
-    /*设置页面底部与注脚距离*/
-    section {
-        margin-bottom: 200px;
-    }
-    /*设置副标题样式*/
-    h2 {
-        font-size: 2.2rem;
-        margin-bottom: 20px;
-        border-bottom: 0.2rem solid #111;
-        padding-bottom: 10px;
-        display: block;
-    }
-    /*设置卡片*/
-    .card ,.result{
-        background: #ffffff;
-        border-radius: 16px; /* 苹果黄金圆角不变 */
-        border: none;
-        padding: 28px;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-        /* 多层重影 + 上下明暗光影 炸裂3D凸台 */
-        box-shadow:
-                0 12px 30px rgba(0, 0, 0, 0.18),
-                0 6px 12px rgba(0, 0, 0, 0.12),
-                0 2px 4px rgba(0, 0, 0, 0.08),
-                inset 0 3px 3px rgba(255,255,255,0.8),
-                inset 0 -3px 3px rgba(0,0,0,0.06);
-    }
+        label{
+            font-weight: 550;
+        }
+        :root {
+            --bg: #dadadc;
+            --text: #111111;
+            --accent: #0066ff;
+        }
 
-    /* 悬浮直接拉满立体效果 */
-    .card:hover, .result:hover{
-        transform: translateY(-6px) scale(1.01);
-        box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.25),
-                0 10px 20px rgba(0, 0, 0, 0.18),
-                0 4px 8px rgba(0, 0, 0, 0.12),
-                inset 0 4px 4px rgba(255,255,255,0.9),
-                inset 0 -4px 4px rgba(0,0,0,0.08);
-    }
+        /* =============== 全局基础样式 =============== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-    input[type="date"] {
-        appearance: none;
-        -webkit-appearance: none;
-        cursor: pointer;
-        color: #333;
-    }
-    input,
-    select {
-        /* 黄金圆角：苹果常用 10–12px，最舒服 */
-        border-radius: 12px;
+        /* =============== 头部 & 标题 =============== */
+        header {
+            text-align: center;
+            margin: 20px 0;
+        }
 
-        /* 内边距：上下 10px 左右 14px，手感刚好 */
-        padding: 10px 14px;
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+        }
 
-        /* 边框：浅灰、不刺眼 */
-        border: 1px solid #d1d5db;
+        .tagline {
+            margin-top: 30px;
+            font-size: 1.35rem;
+            color: #555;
+        }
 
-        /* 字体：苹果系统字体，干净 */
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 15px;
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            border-bottom: 0.2rem solid #111;
+            padding-bottom: 10px;
+        }
 
-        /* 宽度、外边距 */
-        width: 220px;
-        margin: 6px 0 12px 0;
+        /* =============== 导航栏 =============== */
+        nav {
+            position: fixed;
+            left: 0;
+            top: 5px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #111;
+            padding: 5px;
+            display: flex;
+            gap: 0;
+            justify-content: flex-start;
+            z-index: 9999;
+            transition: all 0.3s ease;
+            box-shadow:
+                    0 6px 15px rgba(0,0,0,0.18),
+                    0 3px 6px rgba(0,0,0,0.12),
+                    0 1px 2px rgba(0,0,0,0.08),
+                    inset 0 2px 2px rgba(255,255,255,0.8),
+                    inset 0 -2px 2px rgba(0,0,0,0.06);
+        }
 
-        /* 背景白一点 */
-        background: #fafafa;
+        nav:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow:
+                    0 10px 25px rgba(0,0,0,0.25),
+                    0 5px 10px rgba(0,0,0,0.18),
+                    0 2px 4px rgba(0,0,0,0.12),
+                    inset 0 2px 2px rgba(255,255,255,0.9),
+                    inset 0 -2px 2px rgba(0,0,0,0.08);
+        }
 
-        /* 过渡顺滑 */
-        outline: none;
-        transition: all 0.25s ease;
-    }
-    input:focus,
-    select:focus {
-        border-color: #007aff; /* iOS 蓝 */
-        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
-        background: #fff;
-    }
-    /* 美化日期里面的日历图标 */
-    /* 专门美化 date 输入框（苹果日历图标） */
-    input[type="date"] {
-        appearance: none;
-        -webkit-appearance: none;
-        cursor: pointer;
-    }
+        .title {
+            padding: 0.3rem;
+            background: white;
+            font-size: 1rem;
+            font-weight: 700;
+        }
 
-    /* 日历图标：变精致、不大、不丑 */
-    input[type="date"]::-webkit-calendar-picker-indicator {
-        filter: grayscale(60%);
-        opacity: 0.8;
-        padding: 2px;
-        cursor: pointer;
-    }
-    input[type="date"]::-webkit-calendar-picker-indicator:hover {
-        opacity: 1;
-        filter: grayscale(0%);
-    }
+        /* 导航按钮 */
+        .nav-btn {
+            font-weight: 550;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 2px solid #111;
+            padding: 0.3rem;
+            transition: all 0.3s ease;
+            box-shadow:
+                    0 12px 30px rgba(0,0,0,0.18),
+                    0 6px 12px rgba(0,0,0,0.12),
+                    0 2px 4px rgba(0,0,0,0.08),
+                    inset 0 3px 3px rgba(255,255,255,0.8),
+                    inset 0 -3px 3px rgba(0,0,0,0.06);
+        }
 
-    /*设置统一选择按钮输入样式*/
-    input, select, button {
-        padding: 10px 18px;
-        border: 2px solid #111;
-        font-size: 1rem;
-        margin: 8px 0;
-        cursor: pointer;
-        width: 100%;
-        transition: all 0.2s ease;
-    }
-    /*额外设置按钮格式*/
-    button {
-        border-radius: 12px;
-        padding: 10px 18px;
-        border: none;
-        background: #007aff;
-        color: #fff;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    /*按钮鼠标事件*/
-    button:hover {
-        transform: translateY(-6px) scale(1.01);
-        box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.25),
-                0 10px 20px rgba(0, 0, 0, 0.18),
-                0 4px 8px rgba(0, 0, 0, 0.12),
-                inset 0 2px 2px rgb(255 255 255 / 0.9),
-                inset 0 -4px 4px rgba(0,0,0,0.08);
-    }
-    button:active {
-        transform: scale(0.97);
-    }
-    /*日均格式*/
-    .result {
-        font-size: 1.8rem;
-        font-weight: 700;
-        padding: 20px;
-        background: #f0f8ff;
-        border: 3px solid var(--accent);
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .nav-btn:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow:
+                    0 20px 50px rgba(0,0,0,0.25),
+                    0 10px 20px rgba(0,0,0,0.18),
+                    0 4px 8px rgba(0,0,0,0.12),
+                    inset 0 4px 4px rgba(255,255,255,0.9),
+                    inset 0 -4px 4px rgba(0,0,0,0.08);
+        }
 
-    /* 图片样式 */
-    .item-img {
-        display: block;
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        margin: 10px auto 10px 0;
-        border: 2px solid #aaa8a8;
-    }
-    /* 显示图片样式 */
-    #preview img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border: 2px solid #aaa8a8;
-        margin-top: 10px;
-    }
-    /* 隐藏添加资产 */
-    .box-expand {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.8s ease-in-out;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+        /* 时间按钮 */
+        .time-btn, .time {
+            padding: 0.3rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: absolute;
+        }
 
-    /* 展示添加资产 */
-    .box-expand.show {
-        max-height: 900px; /* 足够装下你的表单 */
-    }
+        .time {
+            position: absolute;
+            right: 18px;
+        }
 
-    .box-sell.expand {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.8s ease-in-out;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .box-sell.show {
-        max-height: 20px; /* 足够装下你的表单 */
-    }
-    /* 滑动 */
-    @keyframes slideUp {
-        from {
+        /* =============== 卡片 & 通用元素 =============== */
+        .card, .item, .result, input, select {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 2px solid #111;
+            padding: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow:
+                    0 12px 30px rgba(0,0,0,0.18),
+                    0 6px 12px rgba(0,0,0,0.12),
+                    0 2px 4px rgba(0,0,0,0.08),
+                    inset 0 3px 3px rgba(255,255,255,0.8),
+                    inset 0 -3px 3px rgba(0,0,0,0.06);
+        }
+
+        .card:hover, .item:hover, .result:hover, input:hover, select:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow:
+                    0 20px 50px rgba(0,0,0,0.25),
+                    0 10px 20px rgba(0,0,0,0.18),
+                    0 4px 8px rgba(0,0,0,0.12),
+                    inset 0 4px 4px rgba(255,255,255,0.9),
+                    inset 0 -4px 4px rgba(0,0,0,0.08);
+        }
+
+        /* 输入框 & 按钮统一样式 */
+        input, select, button {
+            border-radius: 16px;
+            padding: 10px;
+            border: 2px solid #111;
+            font-size: 1rem;
+            margin: 8px 2px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 550;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow:
+                    0 20px 50px rgba(0,0,0,0.25),
+                    0 10px 20px rgba(0,0,0,0.18),
+                    0 4px 8px rgba(0,0,0,0.12),
+                    inset 0 2px 2px rgba(255,255,255,0.9),
+                    inset 0 -4px 4px rgba(0,0,0,0.08);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* 日期输入框美化 */
+        input[type="date"] {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+            color: #333;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: grayscale(60%);
+            opacity: 0.8;
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+            filter: grayscale(0%);
+        }
+
+        input:focus, select:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+            background: #fff;
+        }
+
+        /* =============== 结果展示 =============== */
+        .result {
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding: 20px;
+            background: #f0f8ff;
+            border: 2px solid var(--accent);
+            text-align: center;
+        }
+
+        /* =============== 资产列表 =============== */
+        /* 父容器：设置为 flex 布局，同时保证卡片正常排列 */
+        #items-list, #sell-list ,#buy_items_list{
+            display: flex;
+            flex-wrap: wrap; /* 关键：让卡片自动换行 */
+            gap: 12px; /* 卡片之间的间距 */
+            padding: 10px;
+            justify-content: flex-start;
+            align-items: flex-start; /* 防止高度不一致时被拉伸 */
+        }
+
+        /* 子卡片：设置固定宽度，防止被 flex 压缩 */
+        .item {
+            /* 关键：设置 flex-shrink: 0，禁止卡片被压缩 */
+            flex-shrink: 0;
+            /* 保持原来的宽度计算 */
+            width: calc(50% - 6px); /* 手机一行2张 */
+            background: #fbfbfb;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 1px 5px #eee;
+            box-sizing: border-box; /* 关键：padding/border 不会撑大卡片 */
+        }
+
+        /* 电脑大屏改成一行4张 */
+        @media (min-width: 768px) {
+            .item {
+                width: calc(25% - 9px);
+            }
+        }
+
+        /* 图片样式 */
+        .item-img, #preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 2px solid #aaa8a8;
+        }
+
+        #preview img {
+            margin-top: 10px;
+        }
+
+        /* =============== 展开/折叠框 =============== */
+        .box-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s ease-in-out;
+            margin: 10px 0;
+        }
+
+        .box-expand.show {
+            max-height: 900px;
+        }
+
+        .box-sell {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.8s ease-in-out;
+            margin: 10px 0;
+        }
+
+        .box-sell.show {
+            max-height: 200px;   /* 根据实际内容调整 */
+        }
+
+        /* =============== 动画 & Tab =============== */
+        section {
+            margin-bottom: 200px;
+            animation: slideUp 0.8s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up {
             opacity: 0;
             transform: translateY(20px);
+            transition: all 0.6s ease;
         }
-        to {
+
+        .fade-up.show {
             opacity: 1;
             transform: translateY(0);
         }
-    }
 
-    /* 动画 */
-    section {
-        animation: slideUp 0.8s ease;
-    }
-
-    /* 默认初始状态：透明 + 在下方20px */
-    .fade-up {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.6s ease;
-    }
-
-    /* 进入视口后变成正常位置 */
-    .fade-up.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    /* 资产栏 */
-    #items-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        padding: 10px;
-        justify-content: flex-start;
-        background: #f5f5f5;
-    }
-
-    /* 资产栏 */
-    .item {
-        width: calc(50% - 6px); /* 手机一行2张 */
-        background: #fff;
-        border-radius: 10px;
-        padding: 10px;
-        box-shadow: 0 1px 5px #eee;
-        box-sizing: border-box;
-    }
-    /* 电脑大屏改成一行4张 */
-    @media (min-width: 768px) {
-        .item {
-            width: calc(25% - 9px);
+        .tab-content {
+            display: none;
         }
-    }</style>
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    </style>
 </head>
-<script>let items = [];
-let goals = [];
-let monthlySalary = 12000;
-let balance = { val: 45000, date: new Date().toISOString() };
-let currentPhotoBase64 = ''; // 图片存储
 
-// 图片预览
-function previewPhoto() {
-    //传入元素ID
-    const file = document.getElementById('photo').files[0];
-    if (!file) return;
-    //建立文件袋
-    const reader = new FileReader();
-    //读取文件数据并放入preview
-    reader.onload = function(e) {
-        currentPhotoBase64 = e.target.result;
-        document.getElementById('preview').innerHTML = `<img src="${currentPhotoBase64}" alt="显示失败">`;
-    };
-    reader.readAsDataURL(file);
-}
-//将数据存入本地
-function saveData() {
-    localStorage.setItem('dailyItems', JSON.stringify(items));
-    localStorage.setItem('dailyGoals', JSON.stringify(goals));
-    localStorage.setItem('monthlySalary', monthlySalary);
-    localStorage.setItem('balance', JSON.stringify(balance));
-}
-//解析本地
-function loadData() {
-    if (localStorage.getItem('dailyItems')) items = JSON.parse(localStorage.getItem('dailyItems'));
-    if (localStorage.getItem('dailyGoals')) goals = JSON.parse(localStorage.getItem('dailyGoals'));
-    if (localStorage.getItem('monthlySalary')) monthlySalary = parseFloat(localStorage.getItem('monthlySalary'));
-    if (localStorage.getItem('balance')) balance = JSON.parse(localStorage.getItem('balance'));
-    //解析本地数据后设置全局数据
-    renderAll();
-}
-//导航栏
-function switchTab(n) {
-    //关闭全部页面
-    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-    //显示选中的页面
-    document.getElementById(`tab-${n}`).style.display = 'block';
-    //变色选中页面
-    document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === n));
-}
-//显示现在的时间
-function change_time() {
-    //获取当前时间
-    const now = new Date();
-    //传入当前时间
-    const time=document.getElementById("time");
-    //时间转为cn常用格式（str）
-    time.innerText = now.toLocaleDateString('zh-CN');
-}
-//往前加一天
-function addDay() {
-    //获取当前时间
-    const now_time_str = document.getElementById("time").innerText;
-    //转化为时间制
-    const now_time=new Date(now_time_str);
-    //原本时间的日期加一天
-    now_time.setDate(now_time.getDate() + 1);
-    //将时间替代为加后的时间顺便转换
-    document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
-    //再次读取全部
-    renderAll();
-}
-//往后剪一天
-function reduceDay(){
-    //获取当前时间
-    const now_time_str = document.getElementById("time").innerText;
-    //转化为时间制
-    const now_time=new Date(now_time_str);
-    //原本时间的日期剪一天
-    now_time.setDate(now_time.getDate() - 1);
-    //将时间替代为加后的时间顺便转换
-    document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
-    //再次读取全部
-    renderAll();
-}
-//计算日均
-function calculateDailyCost(item) {
-    // 获取时间
-    const now_time = document.getElementById("time").innerText;
-    const now = new Date(now_time);
-    const purchaseDate = new Date(item.date);
-
-    // 已使用天数（+1修正，第一天就开始递减）
-    let daysPassed = Math.floor((now - purchaseDate) / 86400000) + 1;
-    daysPassed = Math.max(daysPassed, 1);
-
-    // 折旧周期设定（你的原有规则不变）
-    let cycle = 90;
-    if (item.mode === 2) cycle = 30;          // 买断30天
-    else if (item.kind === "数码产品") cycle = 180; // 数码180天
-
-    const totalPrice = item.price;
-    const baseAvg = totalPrice / cycle; // 基础日均
-
-    // 线性递减参数（可根据喜好调整）
-    const firstDayCost = baseAvg * 1.9;  // 第一天最高成本
-    const absoluteMin = baseAvg * 0.05;  // 绝对底线，永远不会低于这个值
-    const stage1Decrease = (firstDayCost - baseAvg) / (cycle - 1); // 阶段1每天减少的金额
-
-    let dailyCost;
-
-    if (daysPassed <= cycle) {
-        // 阶段1：快速递减（0~周期天）
-        dailyCost = firstDayCost - (daysPassed - 1) * stage1Decrease;
-    } else if (daysPassed <= 2 * cycle) {
-        // 阶段2：中速递减（周期~2×周期天）
-        const stage2Start = baseAvg;
-        const daysInStage2 = daysPassed - cycle;
-        dailyCost = stage2Start - daysInStage2 * (stage1Decrease / 2);
-    } else if (daysPassed <= 4 * cycle) {
-        // 阶段3：慢速递减（2×周期~4×周期天）
-        const stage3Start = baseAvg - cycle * (stage1Decrease / 2);
-        const daysInStage3 = daysPassed - 2 * cycle;
-        dailyCost = stage3Start - daysInStage3 * (stage1Decrease / 4);
-    } else {
-        // 阶段4：极慢速递减（4×周期天以后）
-        const stage4Start = baseAvg - cycle * (stage1Decrease / 2) - 2 * cycle * (stage1Decrease / 4);
-        const daysInStage4 = daysPassed - 4 * cycle;
-        dailyCost = stage4Start - daysInStage4 * (stage1Decrease / 10);
-    }
-
-    // 强制锁住绝对底线，永远不为0
-    return Math.max(dailyCost, absoluteMin);
-}
-
-//添加资产
-function addItem() {
-    //提取物品名称
-    const name = document.getElementById('name').value.trim() || '未命名物品';
-    //提取物品价格
-    const dateInput = document.getElementById('date').value;
-    const date = dateInput ?new Date(dateInput) : new Date();
-    const price = parseFloat(document.getElementById('price').value);
-    //提取物品种类
-    const kind = document.getElementById('kind').value;
-    //提取计算模式
-    const mode = parseInt(document.getElementById('mode').value);
-    //如果价格为空阻塞
-    if (!price || price <= 0) return alert('请输入有效价格');
-    //哈希表放放入items数组
-    items.push({
-        name: name,
-        price: price,
-        kind: kind,
-        mode: mode,
-        date: date,
-        photo: currentPhotoBase64 || ''
-    });
-    //减去存款
-    balance.val = Math.max(0, balance.val - price);
-    //当前相片放空防止再次显示
-    currentPhotoBase64 = '';
-    //数据转为json文件存储在本地
-    saveData();
-    //再次读取本地数据重新计算全局
-    renderAll();
-    //全部置为空
-    document.getElementById('name').value = '';
-    document.getElementById('price').value = '';
-    document.getElementById('photo').value = '';
-    document.getElementById('preview').innerHTML = '';
-}
-//删除资产
-function removeItem(index) {
-    //存款重新加回
-    balance.val += items[index].price;
-    //同时更新存款改变的时间
-    balance.date = new Date().toISOString();
-    //删除index当前物品下标，删除1个
-    items.splice(index, 1);
-    //存入本地
-    saveData();
-    //读取重新显示
-    renderAll();
-}
-//显示资产
-function renderItems() {
-    //取ID放入容器
-    const container = document.getElementById('items-list');
-    //将原有数据置空
-    container.innerHTML = '';
-    //将全部日均置0
-    let totalDaily = 0;
-    let all_item_money = 0;
-    //取到当前items的所有数据
-    items.forEach((item, i) => {
-        //计算每件物品的日均价格
-        const daily = calculateDailyCost(item);
-        //全部日均价格
-        totalDaily += daily;
-        //取到当前标签
-        const div = document.createElement('div');
-        //设置为物品标签
-        div.className = 'item';
-        //全部总价
-        all_item_money += item.price;
-        //照片先设置为空（str）
-        let imgHtml = '';
-        //传入照片
-        if (item.photo) {
-            imgHtml = `<img src="${item.photo}" class="item-img" alt="照片未正常显示">`;
-        }
-        //div标签放入元素
-        div.innerHTML = `
-    ${imgHtml ? `<img src="${item.photo}" style="width:100%;height:100px;object-fit:cover;border-radius:6px;margin-bottom:8px;display:block;" alt="">` : ''}
-    <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
-    <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
-    <div style="color:#e64340;font-size:15px;font-weight:bold;">¥${item.price.toLocaleString()}</div>
-    <div style="font-size:12px;color:#0066ff;margin:2px 0;">日均 ¥${daily.toFixed(2)}</div>
-    <div style="font-size:11px;color:#aaa;margin:4px 0;">${new Date(item.date).toLocaleDateString('zh-CN')}</div>
-    <div style="display:flex;gap:10px;margin-top:6px;">
-        <button onclick="removeItem(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">删除</button>
-        <button onclick="togglePanel(${i})" style="flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">出售</button>
-    </div>
-    <div
-    id="sellPanel_${i}"
-    style="overflow:hidden; height:0; transition:height 0.3s linear; margin-top:0; padding:0; background:#f5f5f5; border-radius:6px;">
-  <!-- 展开内容 -->
-        <div style="">
-            <input type="text" id="sell_item_${i}" placeholder="580">
-            <bottle onclick="satellite(${i})" style="cursor: pointer; flex:1;background:#cc0000;color:#fff;border:none;border-radius:4px;padding:4px 0;font-size:12px;">确认出售</button>
-        </div>
-    </div>`;
-        //放入容器中
-        container.appendChild(div);
-    });
-    //遍历后取总金额标签
-    let all_money=document.getElementById('all_money');
-    //放入总金额数值
-    all_money.innerText=all_item_money;
-    const warningSpan=document.getElementById('warning');
-    // 基础样式（所有级别通用）
-    const baseStyle = "display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-left: 5px;";
-    const dailySalary = monthlySalary / 30;
-    //取日均标签放入日均金额
-    document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
-    if (totalDaily > dailySalary * 0.95) {
-        // 严重警告（红色）
-        warningSpan.style.cssText = baseStyle + "background-color: #fff1f0; color: #f5222d; border: 1px solid #ffa39e;";
-        warningSpan.textContent = "严重超标";
-        return 3;
-    } else if (totalDaily > dailySalary * 0.7) {
-        // 一般警告（橙色）
-        warningSpan.style.cssText = baseStyle + "background-color: #fff7e6; color: #fa8c16; border: 1px solid #ffd591;";
-        warningSpan.textContent = "接近上限";
-        return 2;
-    } else {
-        // 正常（蓝色）
-        warningSpan.style.cssText = baseStyle + "background-color: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff;";
-        warningSpan.textContent = "正常";
-        return 1;
-    }
-}
-//动效
-function togglePanel(idx) {
-    let panel = document.getElementById('sellPanel_' + idx);
-
-    if (panel.style.height === '0px' || panel.style.height === '') {
-        // 展开：自动计算内容高度 + 线性动画
-        panel.style.height = panel.scrollHeight + 'px';
-        panel.style.paddingTop = 'px';
-        panel.style.paddingBottom = 'px';
-    } else {
-        // 收起
-        panel.style.height = '0px';
-        panel.style.paddingTop = '0';
-        panel.style.paddingBottom = '0';
-    }
-}
-
-//出售
-function satellite(index){
-    //添加存款
-    const val = parseFloat(document.getElementById('sell_item_'+index).value);
-    balance.val += val;
-    balance.date = new Date().toISOString();
-    items.splice(index, 1); // 删除目标数组里的项
-    saveData();//保存
-    renderAll();//读取
-}
-
-//添加目标
-function addGoal() {
-    //取goal当前值
-    const name = document.getElementById('goal-name').value.trim() || '未命名目标';
-    //取金额
-    const amount = parseFloat(document.getElementById('goal-amount').value);
-    if (!amount || amount <= 0) return alert('请输入目标金额');
-    //goals数组放入数据
-    goals.push({ name, amount});
-    //存入本地
-    saveData();
-    //计算目标
-    calculateGoal();
-    //设置为空
-    document.getElementById('goal-name').value = '';
-    document.getElementById('goal-amount').value = '';
-    alert("添加目标成功");
-}
-//计算目标
-function calculateGoal() {
-    //计算日均薪水
-    const dailyIncome = monthlySalary / 30;
-    let html = '<strong>目标达成预估：</strong><br><br>';
-    //取数goals组内数据
-    goals.forEach((g, index) => {
-        const remaining = g.amount - balance.val;
-        if (remaining <= 0) {
-            html += `${g.name}：已达成！<br>`;
-        } else {
-            const days = Math.ceil(remaining / dailyIncome);
-            html += `${g.name}：约 <strong>${days}</strong> 天（${Math.ceil(days/30)} 个月）<br>`;
-        }
-        // 重点修复：调用 removeGoal 并传 index
-        html += `<button onclick="removeGoal(${index})" style="margin-top:12px;background:#cc0000;color:white;width:auto;padding:6px 14px;border:none;border-radius:4px;">删除</button><br><br>`;
-    });
-    //取目标
-    const resultDiv = document.getElementById('goal-result');
-    //放入文字
-    resultDiv.innerHTML = html;
-    //设置为显示
-    resultDiv.style.display = 'block';
-}
-//删除目标
-function removeGoal(index) {
-    //删除目标
-    goals.splice(index, 1); // 删除目标数组里的项
-    saveData();//保存
-    renderAll();//读取
-}
-//设置月薪
-function updateSalary() {
-    //获取输入的数值
-    const val = parseFloat(document.getElementById('set-salary').value);
-    if (val > 0) {
-        //更新月薪
-        monthlySalary = val;
-        saveData();
-        renderAll();
-        alert('月薪已更新');
-    }
-    document.getElementById('set-salary').value = '';
-}
-//设置存款
-function updateBalance() {
-    //取输入的数据
-    const val = parseFloat(document.getElementById('set-balance').value);
-    if (val >= 0) {
-        //更新存款
-        balance.val = val;
-        balance.date = new Date().toISOString();
-        saveData();
-        renderAll();
-        alert('存款已更新');
-    }
-    //设置为空
-    document.getElementById('set-balance').value = '';
-}
-//显示与读取数据
-function renderAll() {
-    //取到当前页面时间
-    const now_time = document.getElementById("time").innerText;
-    //转换时间
-    const now = new Date(now_time);
-    //获取存款过去时间
-    const purchaseDate = new Date(balance.date);
-    //计算过去时间
-    let daysPassed = Math.floor((now - purchaseDate) / 86400000)+1;
-    //计算月薪水
-    const dailyIncome = monthlySalary / 30;
-    //计算金额
-    const total = balance.val + daysPassed * dailyIncome;
-    //取得ID并放入参数
-    document.getElementById('balance-display').textContent = `¥ ${total.toLocaleString()}`;
-    document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
-    document.getElementById('daily-income').textContent = dailyIncome.toFixed(0);
-    //读取并显示资产
-    renderItems();
-    //计算目标
-    calculateGoal();
-}
-
-// 一键清空本地所有数据
-function clearAllLocalData(){
-    if(!confirm('⚠️ 确定要清空所有数据？消费记录、存钱目标、月薪、存款全部都会删除，不可恢复！')){
-        return;
-    }
-    // 清空 localStorage
-    localStorage.removeItem('dailyItems');
-    localStorage.removeItem('dailyGoals');
-    localStorage.removeItem('monthlySalary');
-    localStorage.removeItem('balance');
-
-    // 清空内存变量
-    items = [];
-    goals = [];
-    monthlySalary = 0;
-    balance = { val: 0, date: new Date().toISOString() };
-
-    // 重新渲染页面
-    renderAll();
-    alert('已清空所有本地数据');
-}
-
-// 资产页面 展开/收起 功能
-// 滚动触发从下滑入
-function checkScrollShow() {
-    const els = document.querySelectorAll('.fade-up');
-    els.forEach(el => {
-        // 判断元素是否进入屏幕可视区域
-        const rect = el.getBoundingClientRect();
-        if(rect.top < window.innerHeight - 80) {
-            el.classList.add('show');
-        }
-    });
-}
-
-// 滚动时一直检测
-window.addEventListener('scroll', checkScrollShow);
-
-window.onload = () => {
-    //首先确定系统时间
-    change_time();
-    //读取本地数据
-    loadData();
-    //启用滑动动效
-    checkScrollShow();
-    //运行页面切换
-    switchTab(0);
-    //动效
-    document.getElementById('add_item').addEventListener('click', function () {
-        document.getElementById('expandBox').classList.toggle('show');
-    });
-};</script>
 <body>
 <!-- 上方导航 -->
-<nav>
-    <div class="title">烧钱日记&nbsp;&nbsp</div>
+<nav style="gap: 2px">
+    <div class="title">烧钱日记</div>
     <div class="nav-btn active" onclick="switchTab(0)">概览</div>
-    <div class="nav-btn" onclick="switchTab(1)">我的资产</div>
+    <div class="nav-btn" onclick="switchTab(1)">资产</div>
     <div class="nav-btn" onclick="switchTab(2)">设置</div>
     <!-- 设置日期 -->
     <div class="time-btn" onclick=reduceDay() style="right: 105px"><</div>
@@ -800,13 +358,15 @@ window.onload = () => {
 <!-- 概览 -->
 <section id="tab-0">
     <!-- 日均 -->
-    <h2 >今日总日均花费</h2>
-    <div class="result" id="total-daily">¥ 0.00</div>
+    <h2 >今日日均花费</h2>
+    <div class="result " id="total-daily">¥ 0.00</div>
     <!-- 存款 -->
     <div  class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px;">
-        <div class="card">
+        <div class="card" id="balance">
             <strong>当前存款</strong><br>
-            <span id="balance-display" style="font-size:2.2rem;">¥ 0</span>
+            <span id="balance-display" style="font-size:2.2rem; ">¥ 0</span>
+            <br>
+            <small id="day-add"></small>
         </div>
         <!-- 月薪 -->
         <div class="card">
@@ -823,51 +383,62 @@ window.onload = () => {
 <!-- 我的资产 -->
 <section id="tab-1" style="display:none">
     <!-- 资产标题 -->
-    <h2>资产<br>
-        <span>资产价值：</span><span id="all_money"></span>
-    </h2>
-
-    <button style="border: solid #ffffff" id="add_item">添加资产<br></button>
-    <!-- 添加资产 -->
-    <div class="box-expand" id="expandBox">
-        <div style="border:1px solid #ccc;padding:15px;margin-top:10px;">
-            <div class="card">
-                <!-- 添加物品 -->
-                <label>物品名称</label>
-                <label for="name"></label><input type="text" id="name" placeholder="例如：Intel A380显卡">
-                <!-- 添加物品价格 -->
-                <label>价格 (元)</label>
-                <label for="price"></label><input type="number" id="price" placeholder="例如：580">
-                <!-- 添加物品购买日期-->
-                <label>购买日期</label>
-                <label for="date"></label><input type="date" id="date" placeholder="选择购买日期">
-                <!-- 分类 -->
-                <label>分类</label>
-                <label for="kind"></label><select id="kind">
-                <option value="普通">普通消费</option>
-                <option value="数码产品">数码产品</option>
-                <option value="奢侈品">奢侈品</option>
-                <option value="美妆">美妆</option>
-                <!-- 选择模式 -->
-            </select>
-                <label>模式</label>
-                <label for="mode"></label><select id="mode">
-                <option value="1">模式一：免息分期（其他90天/数码180天）</option>
-                <option value="2">模式二：买断（30天循环）</option>
-            </select>
-                <!-- 上传照片 -->
-                <label>上传照片（可选）</label>
-                <input type="file" id="photo" accept="image/*" onchange="previewPhoto()">
-
-                <div id="preview" style="margin:15px 0;"></div>
-
-                <button onclick="addItem()">添加物品</button>
-                <br>
-            </div>
-        </div>
+    <div class="card" style="font-size: 2rem;font-weight: bold; ">资产总览<br>
+        <span class="card" style="font-size: 1rem; ">资产价值：<span id="all_money"></span></span>
+        <span class="card" style="font-size: 1rem; text-align: right">日均成本：<span id="total-daily1"></span><small id="total_yesterday"></small></span>
     </div>
 
-    <div id="items-list" class="fade-up"></div>
+    <div style="display: flex; gap: 8px;margin-bottom: 8px" class="nav-btn">
+        <button onclick="showTab('tab1')">拿下中</button>
+        <button onclick="showTab('tab2')">已拿下</button>
+        <button onclick="showTab('tab3')">已出手</button>
+    </div>
+    <div id="tab1" class="tab-content active">
+        <button style="border: solid #000000 2px " id="add_item">添加资产<br></button>
+        <!-- 添加资产 -->
+        <div class="box-expand" id="expandBox">
+            <div style="border:1px solid #ccc;padding:15px;margin-top:10px;">
+                <div class="card">
+                    <!-- 添加物品 -->
+                    <label>物品名称</label>
+                    <label for="name"></label><input type="text" id="name" placeholder="例如：Intel A380显卡">
+                    <!-- 添加物品价格 -->
+                    <label>价格 (元)</label>
+                    <label for="price"></label><input type="number" id="price" placeholder="例如：580">
+                    <!-- 添加物品购买日期-->
+                    <label>购买日期(默认当日)</label>
+                    <label for="date"></label><input type="date" id="date" placeholder="选择购买日期" style="font-weight: 550">
+                    <!-- 分类 -->
+                    <label>分类</label>
+                    <label for="kind"></label><select id="kind">
+                    <option value="普通">普通消费</option>
+                    <option value="数码产品">数码产品</option>
+                    <option value="奢侈品">奢侈品</option>
+                    <option value="美妆">美妆</option>
+                    <!-- 选择模式 -->
+                </select>
+                    <label>模式</label>
+                    <label for="mode"></label><select id="mode">
+                    <option value="2">模式一：买断（30天循环）</option>
+                    <option value="1">模式二：免息分期（其他90天/数码180天）</option>
+                </select>
+                    <!-- 上传照片 -->
+                    <label>上传照片（可选）</label>
+                    <input type="file" id="photo" accept="image/*" onchange="previewPhoto()">
+                    <div id="preview" style="margin:15px 0;"></div>
+                    <button onclick="addItem()">添加物品</button>
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div id="items-list" class="fade-up"></div>
+    </div>
+    <div id="tab2" class="tab-content">
+        <div id="buy_items_list" class="fade-up"></div>
+    </div>
+    <div id="tab3" class="tab-content">
+        <div id="sell-list" class="fade-up"></div>
+    </div>
 </section>
 
 <!-- 设置 -->
@@ -887,6 +458,11 @@ window.onload = () => {
             <label for="set-balance"></label><input style="" type="number" id="set-balance" placeholder="存款">
             <button onclick="updateBalance()" style="">保存存款</button>
         </div>
+        <div class="card">
+            <label style="">每日餐费</label>
+            <label for="set-eat"></label><input style="" type="number" id="set-eat" placeholder="伙食费">
+            <button onclick="update_eat()" style="">保存伙食费</button>
+        </div>
     </div>
 
     <h2>目标规划</h2>
@@ -901,7 +477,7 @@ window.onload = () => {
         <button onclick="addGoal()">添加目标</button>
     </div>
     <!-- 清空数据 -->
-    <button onclick="clearAllLocalData()" style="margin-top:20px;padding:8px 20px;background:red;color:white;border:none;border-radius:4px;">
+    <button onclick="clearAllLocalData()" style="background: #fa3737">
         一键清空所有本地数据
     </button>
 </section>
@@ -909,5 +485,587 @@ window.onload = () => {
 <footer style="text-align:center;margin-top:80px;color:#666;">
     烧钱日记 v2.5 • Python公式移植
 </footer>
+    <script>
+        let items = [];
+        let sell_items = [];
+        let goals = [];
+        let monthlySalary = 0;
+        let balance = { val: 0, date: new Date().toISOString() };
+        let currentPhotoBase64 = ''; // 图片存储
+        let dailyIncome=0;
+        let eat=0;
+        let total=0;
+
+        // 图片预览
+        function previewPhoto() {
+            //传入元素ID
+            const file = document.getElementById('photo').files[0];
+            if (!file) return;
+            //建立文件袋
+            const reader = new FileReader();
+            //读取文件数据并放入preview
+            reader.onload = function(e) {
+                currentPhotoBase64 = e.target.result;
+                document.getElementById('preview').innerHTML = `<img src="${currentPhotoBase64}" alt="显示失败">`;
+            };
+            reader.readAsDataURL(file);
+        }
+        //将数据存入本地
+        function saveData() {
+            localStorage.setItem('dailyItems', JSON.stringify(items));
+            localStorage.setItem('sell_time', JSON.stringify(sell_items));
+            localStorage.setItem('dailyGoals', JSON.stringify(goals));
+            localStorage.setItem('monthlySalary', monthlySalary);
+            localStorage.setItem('eat', eat);
+            localStorage.setItem('balance', JSON.stringify(balance));
+        }
+        //解析本地
+        function loadData() {
+            if (localStorage.getItem('dailyItems')) items = JSON.parse(localStorage.getItem('dailyItems'));
+            if (localStorage.getItem('sell_time')) sell_items = JSON.parse(localStorage.getItem('sell_time'));
+            if (localStorage.getItem('dailyGoals')) goals = JSON.parse(localStorage.getItem('dailyGoals'));
+            if (localStorage.getItem('monthlySalary')) monthlySalary = parseFloat(localStorage.getItem('monthlySalary'));
+            if (localStorage.getItem('balance')) balance = JSON.parse(localStorage.getItem('balance'));
+            if (localStorage.getItem('eat')) eat = parseFloat(localStorage.getItem('eat'));
+            //解析本地数据后设置全局数据
+            renderAll();
+        }
+        //导航栏
+        function switchTab(n) {
+            //关闭全部页面
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+            //显示选中的页面
+            document.getElementById(`tab-${n}`).style.display = 'block';
+            //变色选中页面
+            document.querySelectorAll('.nav-btn').forEach((btn, i) => btn.classList.toggle('active', i === n));
+        }
+
+        function showTab(tabId) {
+            // 隐藏所有内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // 显示选中的内容
+            document.getElementById(tabId).classList.add('active');
+        }
+        //显示现在的时间
+        function change_time() {
+            //获取当前时间
+            const now = new Date();
+            //传入当前时间
+            const time=document.getElementById("time");
+            //时间转为cn常用格式（str）
+            time.innerText = now.toLocaleDateString('zh-CN');
+        }
+        //往前加一天
+        function addDay() {
+            //获取当前时间
+            const now_time_str = document.getElementById("time").innerText;
+            //转化为时间制
+            const now_time=new Date(now_time_str);
+            //原本时间的日期加一天
+            now_time.setDate(now_time.getDate() + 1);
+            //将时间替代为加后的时间顺便转换
+            document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+            //再次读取全部
+            renderAll();
+        }
+        //往后剪一天
+        function reduceDay(){
+            //获取当前时间
+            const now_time_str = document.getElementById("time").innerText;
+            //转化为时间制
+            const now_time=new Date(now_time_str);
+            //原本时间的日期剪一天
+            now_time.setDate(now_time.getDate() - 1);
+            //将时间替代为加后的时间顺便转换
+            document.getElementById("time").innerText = now_time.toLocaleDateString('zh-CN');
+            //再次读取全部
+            renderAll();
+        }
+        //计算物品日均
+        function calculateDailyCost(item,daysPassed) {
+            //获取当前时间
+            //匹配模式
+            let period = 90;
+            //更改为买断式
+            if (item.mode === 2) period = 30;
+            //数码产品生命周期更长匹配为180天
+            else if (item.kind === "数码产品") period = 180;
+            if(daysPassed>period){
+                item.state=1;
+                return 0;
+            }
+            //计算最多日均并返回
+            return (2 * item.price / period / (period + 1)) * (period - daysPassed + 1);
+        }
+        //显示每日涨跌
+        function day_add(){
+            let dailyIncome = monthlySalary / 30-eat;
+            const today = new Date(document.getElementById('time').innerText);
+            today.setDate(today.getDate() + 1);
+            const today_str = today.toISOString().split('T')[0];
+            items.forEach((item, ) =>{
+                const itemDateStr = new Date(item.date).toISOString().split('T')[0];
+                if(itemDateStr === today_str){
+                    dailyIncome -= item.price;
+                }
+            });
+            const day_add = document.getElementById("day-add");
+            if(dailyIncome>0){
+                day_add.innerText ="▲"+dailyIncome.toFixed(2);
+                day_add.style.color = "rgb(237 28 36 / 0.84)";
+            }else {
+                day_add.innerText = "▼"+dailyIncome.toFixed(2);
+                day_add.style.color = '#00A352';
+            }
+        }
+        //添加资产
+        function addItem() {
+            //提取物品名称
+            const name = document.getElementById('name').value.trim() || '未命名物品';
+            //提取物品价格
+            const dateInput = document.getElementById('date').value;
+            const date = dateInput ?new Date(dateInput) : new Date();
+            const price = parseFloat(document.getElementById('price').value);
+            //提取物品种类
+            const kind = document.getElementById('kind').value;
+            //提取计算模式
+            const mode = parseInt(document.getElementById('mode').value);
+            //如果价格为空阻塞
+            if (!price || price <= 0) return alert('请输入有效价格');
+            //哈希表放放入items数组
+            items.push({
+                name: name,
+                price: price,
+                kind: kind,
+                mode: mode,
+                date: date,
+                photo: currentPhotoBase64 || '',
+                state:0
+            });
+            //减去存款
+            balance.val = Math.max(0, balance.val - price);
+            //当前相片放空防止再次显示
+            currentPhotoBase64 = '';
+            //数据转为json文件存储在本地
+            saveData();
+            //再次读取本地数据重新计算全局
+            renderAll();
+            //全部置为空
+            document.getElementById('name').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('photo').value = '';
+            document.getElementById('preview').innerHTML = '';
+            document.getElementById('date').value = '';
+        }
+        //删除资产
+        function removeItem(mode,index) {
+            if (mode === 1){
+                //存款重新加回
+                balance.val += items[index].price;
+                //同时更新存款改变的时间
+                balance.date = new Date().toISOString();
+                //删除index当前物品下标，删除1个
+                items.splice(index, 1);
+                //存入本地
+                saveData();
+                //读取重新显示
+                renderAll();
+            }else if(mode === 0){
+                sell_items.splice(index, 1);
+                //存入本地
+                saveData();
+                //读取重新显示
+                renderAll();
+            }
+        }
+
+        //显示资产
+        function renderItems() {
+            //取ID放入容器
+            const container = document.getElementById('items-list');
+            //将原有数据置空
+            container.innerHTML = '';
+            //取ID放入容器
+            const buy_container = document.getElementById('buy_items_list');
+            //将原有数据置空
+            buy_container.innerHTML = '';
+            //将全部日均置0
+            let totalDaily = 0;
+            let all_item_money = 0;
+            let total_yesterday=0;
+            //取到当前items的所有数据
+            items.forEach((item, i) => {
+                // 获取时间
+                const now_time = document.getElementById("time").innerText;
+                const now = new Date(now_time);
+                const purchaseDate = new Date(item.date);
+                // 已使用天数（+1修正，第一天就开始递减）
+                let daysPassed = Math.ceil((now - purchaseDate) / 86400000);
+                let daily=0;
+                let yesterday=0;
+                //计算每件物品的日均价格
+                if(item.state===0){
+                    daily = calculateDailyCost(item,daysPassed);
+                    yesterday = daily - calculateDailyCost(item,daysPassed+1);
+                }
+                //全部日均价格
+                total_yesterday += yesterday;
+                totalDaily += daily;
+                //取到当前标签
+                const div = document.createElement('div');
+                //设置为物品标签
+                div.className = 'item';
+                //全部总价
+                all_item_money += item.price;
+                //照片先设置为空（str）
+                let imgHtml = '';
+                //传入照片
+                if (item.photo) {
+                    imgHtml = `<img src="${item.photo}" class="item-img" alt="照片未正常显示">`;
+                }
+                //div标签放入元素
+                div.innerHTML = `
+    ${imgHtml ? `<img src="${item.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;margin-bottom:8px;display:block;" alt="">` : ''}
+    <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
+    <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
+    <div style="color:#e64340;font-size:15px;font-weight:bold;">¥${item.price.toLocaleString()}</div>
+    <div style="font-size:12px;color:#0066ff;margin:2px 0;">
+  日均 ¥${daily.toFixed(2)}
+  <small id="daily_down_item${i}" style="margin-left:8px;"></small>
+</div>
+<div style="font-size:11px;color:#aaa;margin:4px 0;">
+  ${new Date(item.date).toLocaleDateString('zh-CN')}
+</div>
+<div style="display:flex;gap:10px;margin-top:6px;">
+  <button onclick="removeItem(1,${i})" id="re${i}" style="flex:1;background:#cc0000;color:#fff;border:none;padding:6px 0;font-size:12px;">删除</button>
+  <button onclick="togglePanel(${i})" style="flex:1;background:#00A352;color:#fff;border:none;padding:6px 0;font-size:12px;">出售</button>
+</div>
+<div
+  id="sellPanel_${i}"
+  style="overflow:hidden; height:0; transition:height 0.3s ease; margin-top:5px; background:#f5f5f5; border-radius:12px;">
+  <div style="">
+    <input type="text" id="sell_item_${i}" placeholder="${item.price.toLocaleString()}">
+    <button onclick="satellite(${i})" style="background: #FFB800">确认出售</button>
+  </div>
+</div>`;
+                console.log('当前状态：', item.state);
+                if(item.state===0){
+                    container.appendChild(div);
+                }else if(item.state===1) {
+                    buy_container.appendChild(div);
+                    document.getElementById('re'+i).remove();
+                }
+                // 赋值 + 颜色
+                const el = document.getElementById('daily_down_item'+i);
+                if(yesterday > 0){
+                    el.innerText = '▼' + yesterday.toFixed(2);
+                    el.style.color = 'rgb(237 28 36 / 0.84)';
+                    el.style.marginLeft = '6px';
+                }else {
+                    el.innerText='拿下';
+                    el.style.color = '#00A352';
+                    el.style.marginLeft = '6px';
+                }
+            });
+            const tys=document.getElementById("total_yesterday")
+
+            if(total_yesterday>0){
+                tys.innerHTML="▼"+total_yesterday.toFixed(2);
+                tys.style.color = 'rgb(237 28 36 / 0.84)';
+                tys.style.marginLeft = '6px';
+            }else {
+                tys.innerText='轻轻松松';
+                tys.style.color = '#00A352';
+                tys.style.marginLeft = '6px';
+            }
+
+            //遍历后取总金额标签
+            let all_money=document.getElementById('all_money');
+            //放入总金额数值
+            all_money.innerText=all_item_money.toLocaleString();
+            const warningSpan=document.getElementById('warning');
+            // 基础样式（所有级别通用）
+            const baseStyle = "display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; margin-left: 5px;";
+            const dailySalary = monthlySalary / 30-eat;
+            //取日均标签放入日均金额
+            document.getElementById('total-daily').textContent = `¥ ${totalDaily.toFixed(2)}`;
+            document.getElementById('total-daily1').textContent = `¥ ${totalDaily.toFixed(2)}`;
+            if(eat!==0){
+                document.getElementById('total-daily').textContent += "+"
+                document.getElementById('total-daily').textContent += `${eat.toFixed()}`;
+            }
+            if (totalDaily > dailySalary * 0.95) {
+                // 严重警告（红色）
+                warningSpan.style.cssText = baseStyle + "background-color: #fff1f0; color: #f5222d; border: 1px solid #ffa39e;";
+                warningSpan.textContent = "严重超标";
+                return 3;
+            } else if (totalDaily > dailySalary * 0.7) {
+                // 一般警告（橙色）
+                warningSpan.style.cssText = baseStyle + "background-color: #fff7e6; color: #fa8c16; border: 1px solid #ffd591;";
+                warningSpan.textContent = "接近上限";
+                return 2;
+            } else {
+                // 正常（蓝色）
+                warningSpan.style.cssText = baseStyle + "background-color: #e6f7ff; color: #1890ff; border: 1px solid #91d5ff;";
+                warningSpan.textContent = "正常";
+                return 1;
+            }
+        }
+        //动效
+        function togglePanel(idx) {
+            let panel = document.getElementById('sellPanel_' + idx);
+
+            if (panel.style.height === '0px' || panel.style.height === '') {
+                // 展开：自动计算内容高度 + 线性动画
+                panel.style.height = panel.scrollHeight + 'px';
+                panel.style.paddingTop = 'px';
+                panel.style.paddingBottom = 'px';
+            } else {
+                // 收起
+                panel.style.height = '0px';
+                panel.style.paddingTop = '0';
+                panel.style.paddingBottom = '0';
+            }
+        }
+
+        function render_sell_item() {
+
+            // 取容器
+            const container = document.getElementById('sell-list');
+            // 清空原有内容
+            container.innerHTML = '';
+
+            // 遍历数据
+            sell_items.forEach((item, i) => {
+                // 创建 div
+                const div = document.createElement("div");
+                //设置为物品标签
+                div.className = 'item';
+                // 图片 HTML（统一处理）
+                let imgHtml = '';
+                if (item.photo) {
+                    imgHtml = `<img
+        src="${item.photo}"
+        style="width:100%;height:100%;object-fit:cover;border-radius:6px;margin-bottom:8px;"
+        alt="">`;
+                }
+
+                // 拼接内容
+                div.innerHTML = `
+      ${imgHtml}
+      <div style="font-size:14px;color:#333;line-height:1.4;">${item.name}</div>
+      <div style="font-size:12px;color:#999;margin:4px 0;">${item.kind}</div>
+      <div style="color:#e64340;font-size:15px;font-weight:bold;">原价：¥${item.price.toLocaleString()}</div>
+      <div style="color:#e64340;font-size:15px;font-weight:bold;">出手价：¥${item.sell_price.toLocaleString()}<br><small style="color: #FFB800">已出售</small></div>
+      <div style="font-size:11px;color:#aaa;margin:4px 0;">
+        购入时间：${new Date(item.date).toLocaleDateString('zh-CN')}<br>
+        出售时间：${new Date(item.sellTime).toLocaleDateString('zh-CN')}
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <button
+          onclick="removeItem(0,${i})"
+          style="flex:1;background:#cc0000;color:#fff;border:none;padding:6px 0;font-size:12px;border-radius:4px;">
+          删除
+        </button>
+      </div>
+    `;
+                // ✅ 关键：把 div 放进容器（你原来漏了这个！）
+                container.appendChild(div);
+            });
+        }
+
+        //出售
+        function satellite(index){
+            //添加存款
+            const sell_price=document.getElementById('sell_item_'+index).value.trim()||items[index].price;
+            const val = parseFloat(sell_price)||0;
+            balance.val = (balance.val || 0) + val;
+            balance.date = new Date().toISOString();
+            sell_items.push({
+                ...items[index],       // 复制原商品信息
+                sell_price: val,           // 存入最终价格
+                sellTime: balance.date // 卖出时间
+            });
+            items.splice(index, 1); // 删除目标数组里的项
+            saveData();//保存
+            renderAll();//读取
+        }
+        //添加目标
+        function addGoal() {
+            //取goal当前值
+            const name = document.getElementById('goal-name').value.trim() || '未命名目标';
+            //取金额
+            const amount = parseFloat(document.getElementById('goal-amount').value);
+            if (!amount || amount <= 0) return alert('请输入目标金额');
+            //goals数组放入数据
+            goals.push({ name, amount});
+            //存入本地
+            saveData();
+            //计算目标
+            calculateGoal();
+            //设置为空
+            document.getElementById('goal-name').value = '';
+            document.getElementById('goal-amount').value = '';
+            alert("添加目标成功");
+        }
+        //计算目标
+        function calculateGoal() {
+            //计算日均薪水
+            const dailyIncome = monthlySalary / 30;
+            let html = '<strong>目标达成预估：</strong><br><br>';
+            //取数goals组内数据
+            goals.forEach((g, index) => {
+                const remaining = g.amount - balance.val;
+                if (remaining <= 0) {
+                    html += `${g.name}：已达成！<br>`;
+                } else {
+                    const days = Math.ceil(remaining / dailyIncome);
+                    html += `${g.name}：约 <strong>${days}</strong> 天（${Math.ceil(days/30)} 个月）<br>`;
+                }
+                // 重点修复：调用 removeGoal 并传 index
+                html += `<button onclick="removeGoal(${index})" style="margin-top:12px;background:#cc0000;color:white;width:auto;padding:6px 14px;border:none;border-radius:4px;">删除</button><br><br>`;
+            });
+            //取目标
+            const resultDiv = document.getElementById('goal-result');
+            //放入文字
+            resultDiv.innerHTML = html;
+            //设置为显示
+            resultDiv.style.display = 'block';
+        }
+        //删除目标
+        function removeGoal(index) {
+            //删除目标
+            goals.splice(index, 1); // 删除目标数组里的项
+            saveData();//保存
+            renderAll();//读取
+        }
+        //设置月薪
+        function updateSalary() {
+            //获取输入的数值
+            const val = parseFloat(document.getElementById('set-salary').value);
+            if (val > 0) {
+                //更新月薪
+                monthlySalary = val;
+                saveData();
+                renderAll();
+                alert('月薪已更新');
+            }
+            document.getElementById('set-salary').value = '';
+        }
+        //设置存款
+        function updateBalance() {
+            //取输入的数据
+            const val = parseFloat(document.getElementById('set-balance').value);
+            if (val >= 0) {
+                //更新存款
+                balance.val = val;
+                balance.date = new Date().toISOString();
+                saveData();
+                renderAll();
+                alert('存款已更新');
+            }
+            //设置为空
+            document.getElementById('set-balance').value = '';
+        }
+        //设置伙食费
+        function update_eat() {
+            const up_eat=document.getElementById('set-eat').value;
+            if (up_eat > 0) {
+                eat=parseFloat(up_eat) || 0;
+                saveData();
+                renderAll();
+                alert("伙食费已更新")
+            }
+            document.getElementById('set-eat').value = '';
+        }
+        //计算每日薪水和总余额
+        function update_dailyIncome() {
+            //取到当前页面时间
+            const now_time = document.getElementById("time").innerText;
+            //转换时间
+            const now = new Date(now_time);
+            //获取存款过去时间
+            const purchaseDate = new Date(balance.date);
+            //计算过去时间
+            let daysPassed = Math.floor((now - purchaseDate) / 86400000)+1;
+            //计算月薪水
+            dailyIncome = monthlySalary / 30-eat;
+            //计算金额
+            total = balance.val + daysPassed * dailyIncome;
+        }
+        //显示与读取数据
+        function renderAll() {
+            //计算每日薪水和总余额
+            update_dailyIncome()
+            //取得ID并放入参数
+            document.getElementById('balance-display').textContent = `¥ ${total.toFixed(2)}`;
+            document.getElementById('salary-display').textContent = `¥ ${monthlySalary.toLocaleString()}`;
+            document.getElementById('daily-income').textContent = dailyIncome.toFixed(0);
+            //读取并显示资产
+            renderItems();
+            //读取并显示已出售资产
+            render_sell_item()
+            //计算目标
+            calculateGoal();
+            day_add();
+        }
+        // 一键清空本地所有数据
+        function clearAllLocalData(){
+            if(!confirm('⚠️ 确定要清空所有数据？消费记录、存钱目标、月薪、存款全部都会删除，不可恢复！')){
+                return;
+            }
+            // 清空 localStorage
+            localStorage.removeItem('dailyItems');
+            localStorage.removeItem('dailyGoals');
+            localStorage.removeItem('monthlySalary');
+            localStorage.removeItem('balance');
+            localStorage.removeItem('eat');
+            localStorage.removeItem('sell_time');
+            // 清空内存变量
+            items = [];
+            sell_items = [];
+            goals = [];
+            monthlySalary = 0;
+            balance = { val: 0, date: new Date().toISOString() };
+            currentPhotoBase64 = ''; // 图片存储
+            dailyIncome=0;
+            eat=0;
+            total=0;
+
+            // 重新渲染页面
+            renderAll();
+            alert('已清空所有本地数据');
+        }
+        // 资产页面 展开/收起 功能
+        // 滚动触发从下滑入
+        function checkScrollShow() {
+            const els = document.querySelectorAll('.fade-up');
+            els.forEach(el => {
+                // 判断元素是否进入屏幕可视区域
+                const rect = el.getBoundingClientRect();
+                if(rect.top < window.innerHeight - 80) {
+                    el.classList.add('show');
+                }
+            });
+        }
+        // 滚动时一直检测
+        window.addEventListener('scroll', checkScrollShow);
+        window.onload = () => {
+            //首先确定系统时间
+            change_time();
+            //读取本地数据
+            loadData();
+            //启用滑动动效
+            checkScrollShow();
+            //运行页面切换
+            switchTab(0);
+            //动效
+            document.getElementById('add_item').addEventListener('click', function () {
+                document.getElementById('expandBox').classList.toggle('show');
+            });
+        };
+    </script>
 </body>
 </html>
